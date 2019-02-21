@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.421
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Poker.TexasHoldem.Lib", "Poker.TexasHoldem.Lib\Poker.TexasHoldem.Lib.csproj", "{48C76445-DEAD-4A3B-BCB3-0B3A473B4C09}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Poker.TexasHoldem.Test", "Poker.TexasHoldem.Test\Poker.TexasHoldem.Test.csproj", "{1B237C24-C7E6-4205-8606-EE2E1F91D8B8}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{48C76445-DEAD-4A3B-BCB3-0B3A473B4C09}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{48C76445-DEAD-4A3B-BCB3-0B3A473B4C09}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{48C76445-DEAD-4A3B-BCB3-0B3A473B4C09}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{48C76445-DEAD-4A3B-BCB3-0B3A473B4C09}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1B237C24-C7E6-4205-8606-EE2E1F91D8B8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1B237C24-C7E6-4205-8606-EE2E1F91D8B8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1B237C24-C7E6-4205-8606-EE2E1F91D8B8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1B237C24-C7E6-4205-8606-EE2E1F91D8B8}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {D07F458E-1626-441E-97DB-C8112A5D1728}
+	EndGlobalSection
+EndGlobal
