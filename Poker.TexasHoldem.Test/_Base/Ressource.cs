@@ -56,10 +56,17 @@ namespace Poker.TexasHoldem.Test._Base
         public static string NaipeOurosSimbolo = "♦";
         #endregion
 
-        #region Msg de Erros Cartas
+        #region Mensagem de Erro Cartas
         public static string CartaFormatoInvalido = "O formato da carta não é válido.";
         public static string CartaValorInvalido = "O valor da carta não é válido.";
         public static string CartaNaipeInvalido = "O naipe da carta não é válido.";
+        #endregion
+
+        #region Mensagem de Erro Baralho
+        public static string BaralhoQuantidadeDeValoresInvalido = "A quantidade de valores não é válida";
+        public static string BaralhoQuantidadeDeNaipesInvalido = "A quantidade de naipes não é válida";
+        public static string BaralhoContemIdsDeValoresDuplicados = "Foram informado valores de cartas duplicados";
+        public static string BaralhoContemIdsDeNaipesDuplicados = "Foram informado naipes de cartas duplicados";
         #endregion
     }
 }

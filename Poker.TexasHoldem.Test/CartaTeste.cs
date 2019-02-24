@@ -70,8 +70,8 @@ namespace Poker.TexasHoldem.Test
                 throw new Exception("O formato da carta não é válido.");
 
             Id = idCarta;
-            Valor = new Valor(arrayCarta[0]);
-            Naipe = new Naipe(arrayCarta[1]);
+            Valor = new Valor(arrayCarta[0].ToUpper());
+            Naipe = new Naipe(arrayCarta[1].ToUpper());
 
         }
 
