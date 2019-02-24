@@ -62,6 +62,10 @@ namespace Poker.TexasHoldem.Test
         public Valor Valor { get; private set; }
         public Naipe Naipe { get; private set; }
 
+        /// <summary>
+        /// Inicia uma instância de carta.
+        /// </summary>
+        /// <param name="idCarta">Id da carta.</param>
         public Carta(string idCarta)
         {
             var arrayCarta = idCarta?.Split(';');
@@ -75,7 +79,15 @@ namespace Poker.TexasHoldem.Test
 
         }
 
-        private static bool ValidaFormato(string[] arrayCarta) => arrayCarta?.Length == 2 && !string.IsNullOrWhiteSpace(arrayCarta[0]) && !string.IsNullOrWhiteSpace(arrayCarta[1]);
+        /// <summary>
+        /// Verifica se o formato da carta é válido
+        /// </summary>
+        /// <param name="arrayCarta">Array contendo o id do valor e o id do naipe</param>
+        /// <returns>Se o formato da carta for válido retorna true, caso contrário falso</returns>
+        private static bool ValidaFormato(string[] arrayCarta)
+        {
+            return arrayCarta?.Length == 2 && !string.IsNullOrWhiteSpace(arrayCarta[0]) && !string.IsNullOrWhiteSpace(arrayCarta[1]);
+        }
 
     }
 }

@@ -59,6 +59,10 @@ namespace Poker.TexasHoldem.Test
         public string Nome { get; private set; }
         public string Simbolo { get; private set; }
 
+        /// <summary>
+        /// Inicia uma instância de naipe
+        /// </summary>
+        /// <param name="id">Id do Naipe</param>
         public Naipe(string id)
         {
             var deParaNaipe = new DeParaNaipe(id);
@@ -77,6 +81,10 @@ namespace Poker.TexasHoldem.Test
             public string Nome { get; private set; }
             public string Simbolo { get; private set; }
 
+            /// <summary>
+            /// Inicia uma instância de De/Para de Naipe.
+            /// </summary>
+            /// <param name="id">Id do valor.</param>
             public DeParaNaipe(string id)
             {
                 switch (id)

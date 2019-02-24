@@ -112,16 +112,30 @@ namespace Poker.TexasHoldem.Test
     public class Baralho
     {
         public List<Carta> Cartas { get; private set; }
+
+        /// <summary>
+        /// Inicia uma instância de baralho
+        /// </summary>
         public Baralho()
         {
             Embaralhar(Ressource.BaralhoIdValores, Ressource.BaralhoIdNaipes);
         }
 
+        /// <summary>
+        ///     Inicia uma instância de baralho. Construtor utilizado apenas para teste
+        /// </summary>
+        /// <param name="valores">Todos os valores separados por ponto e vírgula (;)</param>
+        /// <param name="naipes">Todos os naipes separados por ponto e vírgula (;)</param>
         internal Baralho(string valores, string naipes)
         {
             Embaralhar(valores, naipes);
         }
 
+        /// <summary>
+        /// Realiza o embaralhamento das cartas
+        /// </summary>
+        /// <param name="valores">Todos os valores separados por ponto e vírgula (;)</param>
+        /// <param name="naipes">Todos os naipes separados por ponto e vírgula (;)</param>
         private void Embaralhar(string valores, string naipes)
         {
             var arrCartas = new Carta[52];
@@ -164,6 +178,10 @@ namespace Poker.TexasHoldem.Test
             Cartas = arrCartas.ToList();
         }
 
+        /// <summary>
+        /// Retira a primeira carta do baralho e a retorna.
+        /// </summary>
+        /// <returns>Retorna a primeira carta do baralho</returns>
         public Carta DistribuirCarta()
         {
             var carta = Cartas.First();
@@ -174,6 +192,12 @@ namespace Poker.TexasHoldem.Test
 
     internal static class LogBaralho
     {
+        /// <summary>
+        /// Gera arquivo contendo o log de todos os embaralhamentos realizados. Utilizado apenas para testes.
+        /// </summary>
+        /// <param name="iteracoes">Quantidade de baralhos que serão gerados</param>
+        /// <param name="nomeArquivo">Caminho para o arquivo que será criado</param>
+        /// <param name="habilitarGeracao">Habilita a geração do arquivo de log</param>
         internal static void Gerar(int iteracoes, string nomeArquivo, bool habilitarGeracao)
         {
             if (!habilitarGeracao)

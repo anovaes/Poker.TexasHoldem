@@ -84,6 +84,10 @@ namespace Poker.TexasHoldem.Test
         public string Plural { get; private set; }
         public int Peso { get; private set; }
 
+        /// <summary>
+        /// Inicia uma instância de valor.
+        /// </summary>
+        /// <param name="id">Id do valor</param>
         public Valor(string id)
         {
             var deParaValor = new DeParaValor(id);
@@ -97,6 +101,9 @@ namespace Poker.TexasHoldem.Test
             Peso = deParaValor.Peso;
         }
 
+        /// <summary>
+        /// Troca o peso do Ás
+        /// </summary>
         public void TrocarPeso()
         {
             if (Id == "A")
@@ -110,6 +117,10 @@ namespace Poker.TexasHoldem.Test
             public string Plural { get; private set; }
             public int Peso { get; private set; }
 
+            /// <summary>
+            /// Inicia um objeto do De/Para de Valor.
+            /// </summary>
+            /// <param name="id">Id do valor.</param>
             public DeParaValor(string id)
             {
                 switch (id)
