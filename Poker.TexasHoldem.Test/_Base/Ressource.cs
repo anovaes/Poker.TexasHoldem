@@ -30,12 +30,12 @@ namespace Poker.TexasHoldem.Test._Base
         public static string ValorNoveNome = "NOVE";
         public static int ValorDezPeso = 10;
         public static string ValorDezNome = "DEZ";
-        public static int ValorDamaPeso = 11;
-        public static string ValorDamaNome = "DAMA";
-        public static string ValorDamaPlural = "DAMAS";
-        public static int ValorValetePeso = 12;
+        public static int ValorValetePeso = 11;
         public static string ValorValeteNome = "VALETE";
         public static string ValorValetePlural = "VALETES";
+        public static int ValorDamaPeso = 12;
+        public static string ValorDamaNome = "DAMA";
+        public static string ValorDamaPlural = "DAMAS";
         public static int ValorReiPeso = 13;
         public static string ValorReiNome = "REI";
         public static string ValorReiPlural = "REIS";
@@ -67,6 +67,11 @@ namespace Poker.TexasHoldem.Test._Base
         public static string BaralhoQuantidadeDeNaipesInvalido = "A quantidade de naipes não é válida";
         public static string BaralhoContemIdsDeValoresDuplicados = "Foram informado valores de cartas duplicados";
         public static string BaralhoContemIdsDeNaipesDuplicados = "Foram informado naipes de cartas duplicados";
+        #endregion
+
+        #region Mensagem de Erro Mao
+        public static string MaoCartaInvalida = "Carta inválida";
+        public static string MaoCartasDuplicadas = "As cartas recebidas estão duplicadas";
         #endregion
     }
 }

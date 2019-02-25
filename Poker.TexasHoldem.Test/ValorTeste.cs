@@ -66,7 +66,7 @@ namespace Poker.TexasHoldem.Test
         [InlineData("3", 3)]
         [InlineData("8", 8)]
         [InlineData("10", 10)]
-        [InlineData("Q", 11)]
+        [InlineData("Q", 12)]
         [InlineData("K", 13)]
         public void NaoDeveTrocarPesoDeValoresNaoPermitidos(string valorNaoPermitidoParaTrocaDePeso, int pesoEsperado)
         {
@@ -179,17 +179,17 @@ namespace Poker.TexasHoldem.Test
                         Plural = Ressource.ValorDezNome;
                         Peso = Ressource.ValorDezPeso;
                         break;
-                    case "Q":
-                        Id = id;
-                        Nome = Ressource.ValorDamaNome;
-                        Plural = Ressource.ValorDamaPlural;
-                        Peso = Ressource.ValorDamaPeso;
-                        break;
                     case "J":
                         Id = id;
                         Nome = Ressource.ValorValeteNome;
                         Plural = Ressource.ValorValetePlural;
                         Peso = Ressource.ValorValetePeso;
+                        break;
+                    case "Q":
+                        Id = id;
+                        Nome = Ressource.ValorDamaNome;
+                        Plural = Ressource.ValorDamaPlural;
+                        Peso = Ressource.ValorDamaPeso;
                         break;
                     case "K":
                         Id = id;
