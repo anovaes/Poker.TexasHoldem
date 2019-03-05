@@ -58,7 +58,7 @@ namespace Poker.TexasHoldem.Test
             Carta primeiraCartaNula = new Carta("A;E");
             Carta segundaCartaNula = new Carta("A;E");
             var menssagemDeErro = Assert.Throws<Exception>(() => new Mao(primeiraCartaNula, segundaCartaNula)).Message;
-            Assert.Equal(Ressource.MaoCartasDuplicadas, menssagemDeErro);
+            Assert.Equal(Ressource.MaoCartasJogadorDuplicadas, menssagemDeErro);
         }
 
         [Theory(DisplayName = "DeveClassificarEGerarPontuacaoDaJogada")]
@@ -109,6 +109,16 @@ namespace Poker.TexasHoldem.Test
             Assert.Equal(classificacaoEsperada, maoGerada.Classificacao);
             Assert.Equal(pontuacaoEsperada, maoGerada.Pontuacao);
         }
+
+        [Fact]
+        public void NaoDeveGerarClassificacaoCasoHajaCartasDuplicadas()
+        {
+            var maoBuilderGerada = new MaoBuilder("A;O|K;C", "Q;C|10;C|K;C|8;P|A;O");
+            var maoGerada = new Mao(maoBuilderGerada.CartasJogador[0], maoBuilderGerada.CartasJogador[1]);
+
+            string mensagemDeErro = Assert.Throws<Exception>(() => maoGerada.Classificar(maoBuilderGerada.CartasMesa)).Message;
+            Assert.Equal($"{Ressource.MaoCartasClassificacaoDuplicadas} A;O|K;C", mensagemDeErro);
+        }
     }
 
     public class Mao
@@ -133,7 +143,7 @@ namespace Poker.TexasHoldem.Test
                 throw new Exception(Ressource.MaoCartaInvalida);
 
             if (primeiraCarta.Id == segundaCarta.Id)
-                throw new Exception(Ressource.MaoCartasDuplicadas);
+                throw new Exception(Ressource.MaoCartasJogadorDuplicadas);
 
             Classificacao = "";
             Cartas = new List<Carta>
@@ -164,6 +174,23 @@ namespace Poker.TexasHoldem.Test
         public void Classificar(List<Carta> cartasMesa)
         {
             CartasShowdown = MontarShowdown(cartasMesa).OrderByDescending(carta => carta.Valor.Peso).ToList();
+
+            var cartasDuplicadas = CartasShowdown
+                    .GroupBy(c => c.Id)
+                    .Where(g => g.Count() > 1)
+                    .Select(c => new { Id = c.Key });
+
+            if (cartasDuplicadas.Any())
+            {
+                string idsDuplicados = null;
+
+                foreach (var carta in cartasDuplicadas)
+                {
+                    idsDuplicados += idsDuplicados == null ? carta.Id : $"|{carta.Id}";
+                }
+
+                throw new Exception($"{Ressource.MaoCartasClassificacaoDuplicadas} {idsDuplicados}");
+            }
 
             foreach (var verificar in _listVerificacao)
             {

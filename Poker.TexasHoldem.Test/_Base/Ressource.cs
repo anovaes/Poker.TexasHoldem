@@ -76,7 +76,8 @@ namespace Poker.TexasHoldem.Test._Base
 
         #region Mensagem de Erro Mao
         public static string MaoCartaInvalida = "Carta inválida";
-        public static string MaoCartasDuplicadas = "As cartas recebidas estão duplicadas";
+        public static string MaoCartasJogadorDuplicadas = "As cartas recebidas pelo jogador estão duplicadas";
+        public static string MaoCartasClassificacaoDuplicadas = "As cartas utilizadas para realizar a classificação da jogada contém cartas duplicadas - Cartas duplicadas:";
         #endregion
     }
 }
