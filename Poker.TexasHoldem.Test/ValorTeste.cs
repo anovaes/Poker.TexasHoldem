@@ -83,6 +83,11 @@ namespace Poker.TexasHoldem.Test
         public string Nome { get; private set; }
         public string Plural { get; private set; }
         public int Peso { get; private set; }
+        public string PesoTexto {
+            get {
+                return Peso.ToString().PadLeft(2, '0');
+            }
+        }
 
         /// <summary>
         /// Inicia uma instância de valor.
@@ -140,13 +145,13 @@ namespace Poker.TexasHoldem.Test
                     case "4":
                         Id = id;
                         Nome = Ressource.ValorQuatroNome;
-                        Plural = Ressource.ValorQuatroNome;
+                        Plural = Ressource.ValorQuatroPlural;
                         Peso = Ressource.ValorQuatroPeso;
                         break;
                     case "5":
                         Id = id;
                         Nome = Ressource.ValorCincoNome;
-                        Plural = Ressource.ValorCincoNome;
+                        Plural = Ressource.ValorCincoPlural;
                         Peso = Ressource.ValorCincoPeso;
                         break;
                     case "6":
@@ -158,19 +163,19 @@ namespace Poker.TexasHoldem.Test
                     case "7":
                         Id = id;
                         Nome = Ressource.ValorSeteNome;
-                        Plural = Ressource.ValorSeteNome;
+                        Plural = Ressource.ValorSetePlural;
                         Peso = Ressource.ValorSetePeso;
                         break;
                     case "8":
                         Id = id;
                         Nome = Ressource.ValorOitoNome;
-                        Plural = Ressource.ValorOitoNome;
+                        Plural = Ressource.ValorOitoPlural;
                         Peso = Ressource.ValorOitoPeso;
                         break;
                     case "9":
                         Id = id;
                         Nome = Ressource.ValorNoveNome;
-                        Plural = Ressource.ValorNoveNome;
+                        Plural = Ressource.ValorNovePlural;
                         Peso = Ressource.ValorNovePeso;
                         break;
                     case "10":
