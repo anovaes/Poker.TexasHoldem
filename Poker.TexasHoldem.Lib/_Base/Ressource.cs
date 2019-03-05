@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Poker.TexasHoldem.Test._Base
+﻿namespace Poker.TexasHoldem.Lib._Base
 {
     public static class Ressource
     {

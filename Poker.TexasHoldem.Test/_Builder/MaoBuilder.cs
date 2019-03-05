@@ -1,6 +1,5 @@
-﻿using System;
+﻿using Poker.TexasHoldem.Lib;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Poker.TexasHoldem.Test._Builder
 {

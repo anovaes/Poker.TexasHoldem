@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Poker.TexasHoldem.Test._Util
+namespace Poker.TexasHoldem.Lib._Util
 {
     public static class Texto
     {
