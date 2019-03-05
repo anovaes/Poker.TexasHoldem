@@ -47,7 +47,7 @@ namespace Poker.TexasHoldem.Test
             Carta primeiraCartaNula = null;
             Carta segundaCartaNula = null;
             var menssagemDeErro = Assert.Throws<Exception>(() => new Mao(primeiraCartaNula, segundaCartaNula)).Message;
-            Assert.Equal(Ressource.MaoCartaInvalida, menssagemDeErro);
+            Assert.Equal(Ressource.MaoMsgCartaInvalida, menssagemDeErro);
         }
 
         [Fact]
@@ -56,7 +56,7 @@ namespace Poker.TexasHoldem.Test
             Carta primeiraCartaNula = new Carta("A;E");
             Carta segundaCartaNula = new Carta("A;E");
             var menssagemDeErro = Assert.Throws<Exception>(() => new Mao(primeiraCartaNula, segundaCartaNula)).Message;
-            Assert.Equal(Ressource.MaoCartasJogadorDuplicadas, menssagemDeErro);
+            Assert.Equal(Ressource.MaoMsgCartasJogadorDuplicadas, menssagemDeErro);
         }
 
         [Theory(DisplayName = "DeveClassificarEGerarPontuacaoDaJogada")]
@@ -115,7 +115,7 @@ namespace Poker.TexasHoldem.Test
             var maoGerada = new Mao(maoBuilderGerada.CartasJogador[0], maoBuilderGerada.CartasJogador[1]);
 
             string mensagemDeErro = Assert.Throws<Exception>(() => maoGerada.Classificar(maoBuilderGerada.CartasMesa)).Message;
-            Assert.Equal($"{Ressource.MaoCartasClassificacaoDuplicadas} A;O|K;C", mensagemDeErro);
+            Assert.Equal($"{Ressource.MaoMsgCartasClassificacaoDuplicadas} A;O|K;C", mensagemDeErro);
         }
     }
 }

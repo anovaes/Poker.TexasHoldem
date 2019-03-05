@@ -25,10 +25,10 @@ namespace Poker.TexasHoldem.Lib
         public Mao(Carta primeiraCarta, Carta segundaCarta)
         {
             if (primeiraCarta == null || segundaCarta == null)
-                throw new Exception(Ressource.MaoCartaInvalida);
+                throw new Exception(Ressource.MaoMsgCartaInvalida);
 
             if (primeiraCarta.Id == segundaCarta.Id)
-                throw new Exception(Ressource.MaoCartasJogadorDuplicadas);
+                throw new Exception(Ressource.MaoMsgCartasJogadorDuplicadas);
 
             Classificacao = "";
             Cartas = new List<Carta>
@@ -74,7 +74,7 @@ namespace Poker.TexasHoldem.Lib
                     idsDuplicados += idsDuplicados == null ? carta.Id : $"|{carta.Id}";
                 }
 
-                throw new Exception($"{Ressource.MaoCartasClassificacaoDuplicadas} {idsDuplicados}");
+                throw new Exception($"{Ressource.MaoMsgCartasClassificacaoDuplicadas} {idsDuplicados}");
             }
 
             foreach (var verificar in _listVerificacao)

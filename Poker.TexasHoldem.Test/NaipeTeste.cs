@@ -37,7 +37,7 @@ namespace Poker.TexasHoldem.Test
         public void NaoDevePermitirNaipeInvalido(string naipeInvalido)
         {
             var mensagem = Assert.Throws<Exception>(() => new Naipe(naipeInvalido)).Message;
-            Assert.Equal(Ressource.CartaNaipeInvalido, mensagem);
+            Assert.Equal(Ressource.CartaMsgNaipeInvalido, mensagem);
         }
 
         [Theory(DisplayName = "DeveGerarSimboloEsperado")]

@@ -1,4 +1,7 @@
-﻿namespace Poker.TexasHoldem.Lib._Base
+﻿using Poker.TexasHoldem.Lib._Enum;
+using System.Collections.Generic;
+
+namespace Poker.TexasHoldem.Lib._Base
 {
     public static class Ressource
     {
@@ -57,23 +60,34 @@
         public static string NaipeOurosSimbolo = "♦";
         #endregion
 
+        #region Jogador
+        public static int JogadorFichasInicial = 1000;
+        public static StatusJogador JogadorStatusInicial = StatusJogador.Esperando;
+        #endregion
+
         #region Mensagem de Erro Cartas
-        public static string CartaFormatoInvalido = "O formato da carta não é válido.";
-        public static string CartaValorInvalido = "O valor da carta não é válido.";
-        public static string CartaNaipeInvalido = "O naipe da carta não é válido.";
+        public static string CartaMsgFormatoInvalido = "O formato da carta não é válido.";
+        public static string CartaMsgValorInvalido = "O valor da carta não é válido.";
+        public static string CartaMsgNaipeInvalido = "O naipe da carta não é válido.";
         #endregion
 
         #region Mensagem de Erro Baralho
-        public static string BaralhoQuantidadeDeValoresInvalido = "A quantidade de valores não é válida";
-        public static string BaralhoQuantidadeDeNaipesInvalido = "A quantidade de naipes não é válida";
-        public static string BaralhoContemIdsDeValoresDuplicados = "Foram informado valores de cartas duplicados";
-        public static string BaralhoContemIdsDeNaipesDuplicados = "Foram informado naipes de cartas duplicados";
+        public static string BaralhoMsgQuantidadeDeValoresInvalido = "A quantidade de valores não é válida";
+        public static string BaralhoMsgQuantidadeDeNaipesInvalido = "A quantidade de naipes não é válida";
+        public static string BaralhoMsgContemIdsDeValoresDuplicados = "Foram informado valores de cartas duplicados";
+        public static string BaralhoMsgContemIdsDeNaipesDuplicados = "Foram informado naipes de cartas duplicados";
         #endregion
 
         #region Mensagem de Erro Mao
-        public static string MaoCartaInvalida = "Carta inválida";
-        public static string MaoCartasJogadorDuplicadas = "As cartas recebidas pelo jogador estão duplicadas";
-        public static string MaoCartasClassificacaoDuplicadas = "As cartas utilizadas para realizar a classificação da jogada contém cartas duplicadas - Cartas duplicadas:";
+        public static string MaoMsgCartaInvalida = "Carta inválida";
+        public static string MaoMsgCartasJogadorDuplicadas = "As cartas recebidas pelo jogador estão duplicadas";
+        public static string MaoMsgCartasClassificacaoDuplicadas = "As cartas utilizadas para realizar a classificação da jogada contém cartas duplicadas - Cartas duplicadas:";
+        #endregion
+
+        #region Mensagem de Erro Jogador
+        public static string JogadorMsgIdInvalido = "Não é permitido jogadores com id inferior a 1";
+        public static string JogadorMsgNomeObrigatorio = "É obrigatório informar o nome do jogador";
+        public static string JogadorMsgNomeSuperior20Caracteres = "O nome do jogador não pode ultrapassar os 20 caracteres";
         #endregion
     }
 }

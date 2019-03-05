@@ -18,7 +18,7 @@ namespace Poker.TexasHoldem.Lib
             var deParaNaipe = new DeParaNaipe(id);
 
             if (deParaNaipe.Id == null)
-                throw new Exception(Ressource.CartaNaipeInvalido);
+                throw new Exception(Ressource.CartaMsgNaipeInvalido);
 
             Id = deParaNaipe.Id;
             Nome = deParaNaipe.Nome;

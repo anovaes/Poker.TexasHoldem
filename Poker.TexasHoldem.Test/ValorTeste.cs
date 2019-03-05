@@ -16,7 +16,8 @@ namespace Poker.TexasHoldem.Test
                 Id = "A",
                 Nome = "ÁS",
                 Plural = "ASES",
-                Peso = 14
+                Peso = 14,
+                PesoTexto = "14"
             };
 
             var valorGerado = new Valor(valorEsperado.Id);
@@ -35,7 +36,7 @@ namespace Poker.TexasHoldem.Test
         public void NaoDevePermitirValorInvalido(string valorInvalido)
         {
             var mensagem = Assert.Throws<Exception>(() => new Valor(valorInvalido)).Message;
-            Assert.Equal(Ressource.CartaValorInvalido, mensagem);
+            Assert.Equal(Ressource.CartaMsgValorInvalido, mensagem);
         }
 
         [Fact]

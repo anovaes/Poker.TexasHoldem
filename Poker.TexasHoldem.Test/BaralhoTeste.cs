@@ -51,7 +51,7 @@ namespace Poker.TexasHoldem.Test
         public void NaoDevePermitirQuantidadeDeValoresDeCartasInvalida(string valoresInvalidos, string naipesValidos)
         {
             var mensasgemDeErro = Assert.Throws<Exception>(() => new Baralho(valoresInvalidos, naipesValidos)).Message;
-            Assert.Equal(Ressource.BaralhoQuantidadeDeValoresInvalido, mensasgemDeErro);
+            Assert.Equal(Ressource.BaralhoMsgQuantidadeDeValoresInvalido, mensasgemDeErro);
         }
 
         [Theory(DisplayName = "NaoDevePermitirQuantidadeDeNaipesDeCartasInvalida")]
@@ -63,7 +63,7 @@ namespace Poker.TexasHoldem.Test
         public void NaoDevePermitirQuantidadeDeNaipesDeCartasInvalida(string valoresValidos, string naipesInvalidos)
         {
             var mensasgemDeErro = Assert.Throws<Exception>(() => new Baralho(valoresValidos, naipesInvalidos)).Message;
-            Assert.Equal(Ressource.BaralhoQuantidadeDeNaipesInvalido, mensasgemDeErro);
+            Assert.Equal(Ressource.BaralhoMsgQuantidadeDeNaipesInvalido, mensasgemDeErro);
         }
 
         [Theory(DisplayName = "NaoDevePermitirIdDeValoresDuplicados")]
@@ -72,7 +72,7 @@ namespace Poker.TexasHoldem.Test
         public void NaoDevePermitirIdDeValoresDuplicados(string valoresContendoIdsDuplicados, string naipesValidos)
         {
             var mensasgemDeErro = Assert.Throws<Exception>(() => new Baralho(valoresContendoIdsDuplicados, naipesValidos)).Message;
-            Assert.Equal(Ressource.BaralhoContemIdsDeValoresDuplicados, mensasgemDeErro);
+            Assert.Equal(Ressource.BaralhoMsgContemIdsDeValoresDuplicados, mensasgemDeErro);
         }
 
         [Theory(DisplayName = "NaoDevePermitirIdDeNaipesDuplicados")]
@@ -81,7 +81,7 @@ namespace Poker.TexasHoldem.Test
         public void NaoDevePermitirIdDeNaipesDuplicados(string valoresValidos, string naipesContendoIdsDuplicados)
         {
             var mensasgemDeErro = Assert.Throws<Exception>(() => new Baralho(valoresValidos, naipesContendoIdsDuplicados)).Message;
-            Assert.Equal(Ressource.BaralhoContemIdsDeNaipesDuplicados, mensasgemDeErro);
+            Assert.Equal(Ressource.BaralhoMsgContemIdsDeNaipesDuplicados, mensasgemDeErro);
         }
 
         [Fact]

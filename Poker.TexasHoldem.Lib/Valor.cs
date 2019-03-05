@@ -26,7 +26,7 @@ namespace Poker.TexasHoldem.Lib
             var deParaValor = new DeParaValor(id);
 
             if (deParaValor.Id == null)
-                throw new Exception(Ressource.CartaValorInvalido);
+                throw new Exception(Ressource.CartaMsgValorInvalido);
 
             Id = deParaValor.Id;
             Nome = deParaValor.Nome;

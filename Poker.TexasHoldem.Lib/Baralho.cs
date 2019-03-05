@@ -41,16 +41,16 @@ namespace Poker.TexasHoldem.Lib
             var arrNaipes = (naipes ?? "").Split(";");
 
             if (arrValores.Length != 13)
-                throw new Exception(Ressource.BaralhoQuantidadeDeValoresInvalido);
+                throw new Exception(Ressource.BaralhoMsgQuantidadeDeValoresInvalido);
 
             if (arrNaipes.Length != 4)
-                throw new Exception(Ressource.BaralhoQuantidadeDeNaipesInvalido);
+                throw new Exception(Ressource.BaralhoMsgQuantidadeDeNaipesInvalido);
 
             if (arrValores.GroupBy(valor => valor).Where(grupo => grupo.Count() > 1).Count() > 0)
-                throw new Exception(Ressource.BaralhoContemIdsDeValoresDuplicados);
+                throw new Exception(Ressource.BaralhoMsgContemIdsDeValoresDuplicados);
 
             if (arrNaipes.GroupBy(valor => valor).Where(grupo => grupo.Count() > 1).Count() > 0)
-                throw new Exception(Ressource.BaralhoContemIdsDeNaipesDuplicados);
+                throw new Exception(Ressource.BaralhoMsgContemIdsDeNaipesDuplicados);
 
             foreach (var valor in arrValores)
             {
