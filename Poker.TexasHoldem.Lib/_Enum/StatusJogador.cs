@@ -6,6 +6,6 @@ namespace Poker.TexasHoldem.Lib._Enum
 {
     public enum StatusJogador
     {
-        Esperando, EmAcao, Ativo, ForaDaMesa, Eliminado
+        Esperando, EmAcao, Ativo, ForaDaMesa, AllIn, Eliminado
     }
 }

@@ -13,6 +13,12 @@ namespace Poker.TexasHoldem.Test
     {
         private readonly int _idJogadorDefault = 1;
         private readonly string _nomeJogadorDefault = "Alexandre Teste";
+        private readonly Jogador _jogadorDefault;
+
+        public JogadorTeste()
+        {
+            _jogadorDefault = new Jogador(_idJogadorDefault, _nomeJogadorDefault);
+        }
 
         [Fact]
         public void DeveGerarJogador()
@@ -62,42 +68,95 @@ namespace Poker.TexasHoldem.Test
         [Theory(DisplayName = "PermitirDebitarFichasDoJogador")]
         [InlineData(100, 900)]
         [InlineData(500, 500)]
-        [InlineData(1000, 0)]
-        public void PermitirDebitarFichasDoJogador(int fichasRetiradas, int fichasEsperadas)
+        [InlineData(999, 1)]
+        public void PermitirDebitarFichasDoJogador(int fichasApostadas, int fichasTotalEsperadas)
         {
-            var jogadorGerado = new Jogador(_idJogadorDefault, _nomeJogadorDefault);
+            _jogadorDefault.Apostar(fichasApostadas);
 
-            jogadorGerado.DebitarFichas(fichasRetiradas);
-
-            Assert.Equal(fichasEsperadas, jogadorGerado.Fichas);
+            Assert.Equal(fichasTotalEsperadas, _jogadorDefault.Fichas);
         }
 
         [Theory(DisplayName = "PermitirDuasAcoesDeDebitarFichasDoJogador")]
         [InlineData(100, 100, 800)]
         [InlineData(250, 250, 500)]
         [InlineData(500, 500, 0)]
-        public void PermitirDuasAcoesDeDebitarFichasDoJogador(int fichasRetiradasAcao1, int fichasRetiradasAcao2, int fichasEsperadas)
+        public void PermitirDuasAcoesDeDebitarFichasDoJogador(int fichasApostadasAcao1, int fichasApostadasAcao2, int fichasTotalEsperadas)
         {
-            var jogadorGerado = new Jogador(_idJogadorDefault, _nomeJogadorDefault);
+            _jogadorDefault.Apostar(fichasApostadasAcao1);
+            _jogadorDefault.Apostar(fichasApostadasAcao2);
 
-            jogadorGerado.DebitarFichas(fichasRetiradasAcao1);
-            jogadorGerado.DebitarFichas(fichasRetiradasAcao2);
-
-            Assert.Equal(fichasEsperadas, jogadorGerado.Fichas);
+            Assert.Equal(fichasTotalEsperadas, _jogadorDefault.Fichas);
         }
 
         [Theory(DisplayName = "PermitirRetirarQuantidadeSuperiorAoMáximoDeFichasDoJogador")]
         [InlineData(1200, 0, 1000)]
         [InlineData(2000, 0, 1000)]
         [InlineData(3000, 0, 1000)]
-        public void PermitirRetirarQuantidadeSuperiorAoMáximoDeFichasDoJogador(int fichasRetiradas, int fichasTotaisAposODebito, int fichasRetiradasEsperadas)
+        public void PermitirRetirarQuantidadeSuperiorAoMáximoDeFichasDoJogador(int fichasApostadas, int fichasTotaisAposAposta, int fichasApostadasEsperadas)
         {
-            var jogadorGerado = new Jogador(_idJogadorDefault, _nomeJogadorDefault);
+            var fichasApostadasPeloJogador = _jogadorDefault.Apostar(fichasApostadas);
 
-            var fichasRetiradasDoJogador = jogadorGerado.DebitarFichas(fichasRetiradas);
+            Assert.Equal(fichasTotaisAposAposta, _jogadorDefault.Fichas);
+            Assert.Equal(fichasApostadasEsperadas, fichasApostadasPeloJogador);
+        }
 
-            Assert.Equal(fichasTotaisAposODebito, jogadorGerado.Fichas);
-            Assert.Equal(fichasRetiradasEsperadas, fichasRetiradasDoJogador);
+        [Theory(DisplayName ="TrocarStatusdoJogadorParaAllInSeAQuantidadeDeFichasApostadasForMaiorQueAQUantidadeTotalDeFichas")]
+        [InlineData(500, StatusJogador.Esperando)]
+        [InlineData(1000, StatusJogador.AllIn)]
+        [InlineData(2000, StatusJogador.AllIn)]
+        public void TrocarStatusdoJogadorParaAllInSeAQuantidadeDeFichasApostadasForMaiorQueAQUantidadeTotalDeFichas(int fichasApostadas, StatusJogador statusEsperado)
+        {
+            var fichasRetiradasDoJogador = _jogadorDefault.Apostar(fichasApostadas);
+
+            Assert.Equal(statusEsperado, _jogadorDefault.Status);
+        }
+
+        [Theory(DisplayName ="VerficarQuantidadeDeFichasApostadasAposTresApostas")]
+        [InlineData(100, 200, 300, 600)]
+        [InlineData(100, 300, 600, 1000)]
+        [InlineData(300, 300, 800, 1000)]
+        public void VerficarQuantidadeDeFichasApostadasAposTresApostas(int fichasAposta1, int fichasAposta2, int fichasAposta3, int totalDeFichasApostadasEsperado)
+        {
+            _jogadorDefault.Apostar(fichasAposta1);
+            _jogadorDefault.Apostar(fichasAposta2);
+            _jogadorDefault.Apostar(fichasAposta3);
+
+            Assert.Equal(totalDeFichasApostadasEsperado, _jogadorDefault.FichasApostadas);
+        }
+
+        [Theory(DisplayName ="PermitirCreditoDeFichas")]
+        [InlineData(200, 1200)]
+        [InlineData(500, 1500)]
+        [InlineData(1000, 2000)]
+        public void PermitirCreditoDeFichas(int fichas, int totalDeFichasEsperado)
+        {
+            _jogadorDefault.AdicionarFichas(fichas);
+
+            Assert.Equal(totalDeFichasEsperado, _jogadorDefault.Fichas);
+        }
+
+        [Theory(DisplayName = "PermitirTrocarDeStatus")]
+        [InlineData(StatusJogador.Ativo)]
+        [InlineData(StatusJogador.EmAcao)]
+        [InlineData(StatusJogador.Eliminado)]
+        public void PermitirTrocarDeStatus(StatusJogador statusJogadorEsperado)
+        {
+            _jogadorDefault.TrocarStatus(statusJogadorEsperado);
+
+            Assert.Equal(statusJogadorEsperado, _jogadorDefault.Status);
+        }
+
+        [Theory(DisplayName = "NaoTrocarStatusSeJogadorEstiverEliminado")]
+        [InlineData(StatusJogador.Ativo)]
+        [InlineData(StatusJogador.EmAcao)]
+        [InlineData(StatusJogador.AllIn)]
+        public void NaoTrocarStatusSeJogadorEstiverEliminado(StatusJogador novoStatusJogador)
+        {
+            var statusJogadorEsperado = StatusJogador.Eliminado;
+            _jogadorDefault.TrocarStatus(StatusJogador.Eliminado);
+            _jogadorDefault.TrocarStatus(novoStatusJogador);
+
+            Assert.Equal(statusJogadorEsperado, _jogadorDefault.Status);
         }
     }
 
@@ -106,6 +165,7 @@ namespace Poker.TexasHoldem.Test
         public int Id { get; private set; }
         public string Nome { get; private set; }
         public int Fichas { get; private set; }
+        public int FichasApostadas { get; private set; }
         public StatusJogador Status { get; private set; }
         public Mao Mao { get; private set; }
 
@@ -135,21 +195,39 @@ namespace Poker.TexasHoldem.Test
         /// <summary>
         /// Debita as fichas do jogador e retorna o valor. 
         /// </summary>
-        /// <param name="fichas">Fichas a serem debitadas</param>
-        /// <returns>Quantidade de fichas debitadas. Caso o valor a ser debitado seja superior a quantidade máxima, retorna apenas a quantidade máxima </returns>
-        public int DebitarFichas(int fichasDebito)
+        /// <param name="fichasAposta">Fichas apostadas</param>
+        /// <returns>Quantidade de fichas apostadas. Caso o valor apostado seja superior a quantidade máxima, retorna apenas a quantidade máxima e 
+        /// troca o status do jogador para AllIn </returns>
+        public int Apostar(int fichasAposta)
         {
-            if (Fichas < fichasDebito)
+            if (Fichas <= fichasAposta)
             {
-                fichasDebito = Fichas;
+                fichasAposta = Fichas;
                 Fichas = 0;
+                Status = StatusJogador.AllIn;
             }
             else
             {
-                Fichas -= fichasDebito;
+                Fichas -= fichasAposta;
             }
 
-            return fichasDebito;
+            FichasApostadas += fichasAposta;
+            return fichasAposta;
+        }
+
+        /// <summary>
+        /// Adiciona as fichas ao montante do jogador
+        /// </summary>
+        /// <param name="fichas"></param>
+        public void AdicionarFichas(int fichas)
+        {
+            Fichas += fichas;
+        }
+
+        public void TrocarStatus(StatusJogador statusJogador)
+        {
+            if (Status != StatusJogador.Eliminado)
+                Status = statusJogador;
         }
     }
 }
