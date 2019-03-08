@@ -9,13 +9,12 @@ namespace Poker.TexasHoldem.Lib
     public class Mao
     {
         public List<Carta> Cartas { get; private set; }
-        public List<Carta> CartasShowdown { get; private set; }
         public string Classificacao { get; private set; }
         public long Pontuacao { get; private set; }
 
         private delegate bool MetodoVerificacao();
-
         private readonly List<MetodoVerificacao> _listVerificacao;
+        private List<Carta> _cartasShowdown;
 
         /// <summary>
         /// Inicia uma instância de mão
@@ -58,9 +57,9 @@ namespace Poker.TexasHoldem.Lib
         /// <param name="cartasMesa">Cartas da mesa. É esperado receber uma lista contendo cinco cartas</param>
         public void Classificar(List<Carta> cartasMesa)
         {
-            CartasShowdown = MontarShowdown(cartasMesa).OrderByDescending(carta => carta.Valor.Peso).ToList();
+            _cartasShowdown = MontarShowdown(cartasMesa).OrderByDescending(carta => carta.Valor.Peso).ToList();
 
-            var cartasDuplicadas = CartasShowdown
+            var cartasDuplicadas = _cartasShowdown
                     .GroupBy(c => c.Id)
                     .Where(g => g.Count() > 1)
                     .Select(c => new { Id = c.Key });
@@ -114,13 +113,13 @@ namespace Poker.TexasHoldem.Lib
         {
             try
             {
-                var grupo = CartasShowdown.Take(5).GroupBy(carta => carta.Naipe.Nome);
+                var grupo = _cartasShowdown.Take(5).GroupBy(carta => carta.Naipe.Nome);
 
-                if (CartasShowdown[0].Valor.Peso == 14 &&
-                    CartasShowdown[1].Valor.Peso == 13 &&
-                    CartasShowdown[2].Valor.Peso == 12 &&
-                    CartasShowdown[3].Valor.Peso == 11 &&
-                    CartasShowdown[4].Valor.Peso == 10 &&
+                if (_cartasShowdown[0].Valor.Peso == 14 &&
+                    _cartasShowdown[1].Valor.Peso == 13 &&
+                    _cartasShowdown[2].Valor.Peso == 12 &&
+                    _cartasShowdown[3].Valor.Peso == 11 &&
+                    _cartasShowdown[4].Valor.Peso == 10 &&
                     grupo.Count() == 1)
                 {
                     Classificacao = $"Royal Flush de {grupo.First().Key}";
@@ -144,12 +143,12 @@ namespace Poker.TexasHoldem.Lib
         {
             try
             {
-                (string Id, string Nome) flush = AgruparNaipe(CartasShowdown);
+                (string Id, string Nome) flush = AgruparNaipe(_cartasShowdown);
 
                 if (flush.Id == null)
                     return false;
 
-                return IsSequencia(CartasShowdown.Where(c => c.Naipe.Id == flush.Id).ToList(), $"Straight Flush de {flush.Nome},", "8");
+                return IsSequencia(_cartasShowdown.Where(c => c.Naipe.Id == flush.Id).ToList(), $"Straight Flush de {flush.Nome},", "8");
             }
             catch (Exception ex)
             {
@@ -165,11 +164,11 @@ namespace Poker.TexasHoldem.Lib
         {
             try
             {
-                (string Id, string Plural, string Peso) quadra = AgruparValor(CartasShowdown, 4, null);
+                (string Id, string Plural, string Peso) quadra = AgruparValor(_cartasShowdown, 4, null);
 
                 if (quadra.Id != null)
                 {
-                    (string Nome, string Peso) kicker = ObterKickers(CartasShowdown, quadra.Id, 1).First();
+                    (string Nome, string Peso) kicker = ObterKickers(_cartasShowdown, quadra.Id, 1).First();
                     Classificacao = $"Quadra de {quadra.Plural}, kicker {kicker.Nome}";
                     Pontuacao = long.Parse($"7{Texto.Repeat(quadra.Peso, 4)}{kicker.Peso}");
                     return true;
@@ -191,12 +190,12 @@ namespace Poker.TexasHoldem.Lib
         {
             try
             {
-                (string Id, string Plural, string Peso) trinca = AgruparValor(CartasShowdown, 3, null);
+                (string Id, string Plural, string Peso) trinca = AgruparValor(_cartasShowdown, 3, null);
 
                 if (trinca.Id == null)
                     return false;
 
-                (string Id, string Plural, string Peso) par = AgruparValor(CartasShowdown, 2, trinca.Id);
+                (string Id, string Plural, string Peso) par = AgruparValor(_cartasShowdown, 2, trinca.Id);
 
                 if (par.Id != null)
                 {
@@ -221,7 +220,7 @@ namespace Poker.TexasHoldem.Lib
         {
             try
             {
-                (string Id, string Nome) flush = AgruparNaipe(CartasShowdown);
+                (string Id, string Nome) flush = AgruparNaipe(_cartasShowdown);
 
                 if (flush.Id == null)
                     return false;
@@ -229,7 +228,7 @@ namespace Poker.TexasHoldem.Lib
                 int contador = 1;
                 string pontuacao = "";
 
-                foreach (var carta in CartasShowdown.Where(c => c.Naipe.Id == flush.Id).Take(5))
+                foreach (var carta in _cartasShowdown.Where(c => c.Naipe.Id == flush.Id).Take(5))
                 {
                     pontuacao += carta.Valor.PesoTexto;
 
@@ -260,7 +259,7 @@ namespace Poker.TexasHoldem.Lib
         {
             try
             {
-                return IsSequencia(CartasShowdown.Take(7).ToList(), "Sequência de", "4");
+                return IsSequencia(_cartasShowdown.Take(7).ToList(), "Sequência de", "4");
             }
             catch (Exception ex)
             {
@@ -276,12 +275,12 @@ namespace Poker.TexasHoldem.Lib
         {
             try
             {
-                (string Id, string Plural, string Peso) trinca = AgruparValor(CartasShowdown, 3, null);
+                (string Id, string Plural, string Peso) trinca = AgruparValor(_cartasShowdown, 3, null);
 
                 if (trinca.Id == null)
                     return false;
 
-                (string Nome, string Peso)[] kickers = ObterKickers(CartasShowdown, trinca.Id, 2);
+                (string Nome, string Peso)[] kickers = ObterKickers(_cartasShowdown, trinca.Id, 2);
 
                 Classificacao = $"Trinca de {trinca.Plural}, kickers {kickers[0].Nome} e {kickers[1].Nome}";
                 Pontuacao = long.Parse($"3{Texto.Repeat(trinca.Peso, 3)}{string.Concat(kickers[0].Peso, kickers[1].Peso)}");
@@ -301,17 +300,17 @@ namespace Poker.TexasHoldem.Lib
         {
             try
             {
-                (string Id, string Plural, string Peso) par1 = AgruparValor(CartasShowdown, 2, null);
+                (string Id, string Plural, string Peso) par1 = AgruparValor(_cartasShowdown, 2, null);
 
                 if (par1.Id == null)
                     return false;
 
-                (string Id, string Plural, string Peso) par2 = AgruparValor(CartasShowdown, 2, par1.Id);
+                (string Id, string Plural, string Peso) par2 = AgruparValor(_cartasShowdown, 2, par1.Id);
 
                 if (par2.Id == null)
                     return false;
 
-                var kicker = CartasShowdown
+                var kicker = _cartasShowdown
                     .Where(c => c.Valor.Id != par1.Id && c.Valor.Id != par2.Id)
                     .First();
 
@@ -333,12 +332,12 @@ namespace Poker.TexasHoldem.Lib
         {
             try
             {
-                (string Id, string Plural, string Peso) par = AgruparValor(CartasShowdown, 2, null);
+                (string Id, string Plural, string Peso) par = AgruparValor(_cartasShowdown, 2, null);
 
                 if (par.Id == null)
                     return false;
 
-                (string Nome, string Peso)[] kickers = ObterKickers(CartasShowdown, par.Id, 3);
+                (string Nome, string Peso)[] kickers = ObterKickers(_cartasShowdown, par.Id, 3);
 
                 Classificacao = $"Par de {par.Plural}, kickers {kickers[0].Nome}, {kickers[1].Nome} e {kickers[2].Nome}";
                 Pontuacao = long.Parse($"1{Texto.Repeat(par.Peso, 2)}{string.Concat(kickers[0].Peso, kickers[1].Peso, kickers[2].Peso)}");
@@ -361,7 +360,7 @@ namespace Poker.TexasHoldem.Lib
                 var pontuacao = "";
                 var contador = 1;
 
-                foreach (var carta in CartasShowdown.Take(5).ToList())
+                foreach (var carta in _cartasShowdown.Take(5).ToList())
                 {
                     pontuacao += carta.Valor.PesoTexto;
 
@@ -439,7 +438,7 @@ namespace Poker.TexasHoldem.Lib
         /// <returns>Retorna uma lista de tupla contendo o Nome e o Peso das cartas kickers</returns>
         private (string Nome, string Peso)[] ObterKickers(List<Carta> cartas, string idIgnorado, int quantidadeDeCartas)
         {
-            return CartasShowdown
+            return _cartasShowdown
                 .Where(c => c.Valor.Id != idIgnorado)
                 .Take(quantidadeDeCartas)
                 .Select(c => (Nome: c.Valor.Nome, Peso: c.Valor.PesoTexto))

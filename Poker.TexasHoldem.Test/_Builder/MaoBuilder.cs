@@ -9,6 +9,21 @@ namespace Poker.TexasHoldem.Test._Builder
         public List<Carta> CartasMesa { get; private set; }
 
         /// <summary>
+        /// Inicia uma instância da MaoBuilder. Apenas preenche as cartas do jogador
+        /// </summary>
+        /// <param name="cartasJogador">Sequência de cartas do jogador separadas por pipe (|)</param>
+        public MaoBuilder(string cartasJogador)
+        {
+            var arrCartasJogador = cartasJogador.Split("|");
+            CartasJogador = new List<Carta>();
+
+            foreach (var carta in arrCartasJogador)
+            {
+                CartasJogador.Add(new Carta(carta));
+            }
+        }
+
+        /// <summary>
         /// Inicia uma instância de MaoBuilder
         /// </summary>
         /// <param name="cartasJogador">Sequência de cartas do jogador separadas por pipe (|)</param>

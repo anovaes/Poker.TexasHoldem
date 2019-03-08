@@ -2,8 +2,10 @@
 using Poker.TexasHoldem.Lib;
 using Poker.TexasHoldem.Lib._Base;
 using Poker.TexasHoldem.Lib._Enum;
+using Poker.TexasHoldem.Test._Builder;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Xunit;
 
@@ -124,17 +126,6 @@ namespace Poker.TexasHoldem.Test
             Assert.Equal(totalDeFichasApostadasEsperado, _jogadorDefault.FichasApostadas);
         }
 
-        [Theory(DisplayName ="PermitirCreditoDeFichas")]
-        [InlineData(200, 1200)]
-        [InlineData(500, 1500)]
-        [InlineData(1000, 2000)]
-        public void PermitirCreditoDeFichas(int fichas, int totalDeFichasEsperado)
-        {
-            _jogadorDefault.AdicionarFichas(fichas);
-
-            Assert.Equal(totalDeFichasEsperado, _jogadorDefault.Fichas);
-        }
-
         [Theory(DisplayName = "PermitirTrocarDeStatus")]
         [InlineData(StatusJogador.Ativo)]
         [InlineData(StatusJogador.EmAcao)]
@@ -157,6 +148,115 @@ namespace Poker.TexasHoldem.Test
             _jogadorDefault.TrocarStatus(novoStatusJogador);
 
             Assert.Equal(statusJogadorEsperado, _jogadorDefault.Status);
+        }
+
+        [Fact]
+        public void DeveIniciarJogada()
+        {
+            var maoBuilder = new MaoBuilder("A;P|K;O");
+            var quantidadeDeCartasEsperada = 2;
+
+            _jogadorDefault.IniciarRodada(maoBuilder.CartasJogador[0], maoBuilder.CartasJogador[1]);
+
+            Assert.True(_jogadorDefault.Mao.Cartas.Any());
+            Assert.Equal(quantidadeDeCartasEsperada, _jogadorDefault.Mao.Cartas.Count());
+            Assert.Equal(maoBuilder.CartasJogador[0].Id, _jogadorDefault.Mao.Cartas[0].Id);
+            Assert.Equal(maoBuilder.CartasJogador[1].Id, _jogadorDefault.Mao.Cartas[1].Id);
+        }
+
+        [Fact]
+        public void DeveEncerrarJogada()
+        {
+            var maoBuilder = new MaoBuilder("A;P|K;O");
+            var fichasGanhas = 500;
+            var fichasTotalEsperadaComJogador = 1500;
+
+            _jogadorDefault.IniciarRodada(maoBuilder.CartasJogador[0], maoBuilder.CartasJogador[1]);
+            _jogadorDefault.EncerrarRodada(fichasGanhas);
+
+            Assert.Equal(fichasTotalEsperadaComJogador, _jogadorDefault.Fichas);
+        }
+
+        [Fact]
+        public void DeveLimparAMaoDoJogadorAposEncerrarAJogada()
+        {
+            var maoBuilder = new MaoBuilder("A;P|K;O");
+            var fichasGanhas = 500;
+
+            _jogadorDefault.IniciarRodada(maoBuilder.CartasJogador[0], maoBuilder.CartasJogador[1]);
+            _jogadorDefault.EncerrarRodada(fichasGanhas);
+
+            Assert.Null(_jogadorDefault.Mao);
+        }
+
+        [Fact]
+        public void DeveEliminarJogadorCasoStatusForAllInENaoTenhaRecebidoNenhumaFicha()
+        {
+            var maoBuilder = new MaoBuilder("A;P|K;O");
+            var fichasApostadas = 1000;
+            var fichasGanhas = 0;
+            var statusEsperado = StatusJogador.Eliminado;
+
+            _jogadorDefault.IniciarRodada(maoBuilder.CartasJogador[0], maoBuilder.CartasJogador[1]);
+            _jogadorDefault.Apostar(fichasApostadas);
+            _jogadorDefault.EncerrarRodada(fichasGanhas);
+
+            Assert.Equal(statusEsperado, _jogadorDefault.Status);
+        }
+
+        [Fact]
+        public void DeveAlterarStatusDoJogadorParaAtivoCasoStatusForAllInETenhaRecebidoFicha()
+        {
+            var maoBuilder = new MaoBuilder("A;P|K;O");
+            var fichasApostadas = 1000;
+            var fichasGanhas = 2000;
+            var statusEsperado = StatusJogador.Ativo;
+
+            _jogadorDefault.IniciarRodada(maoBuilder.CartasJogador[0], maoBuilder.CartasJogador[1]);
+            _jogadorDefault.Apostar(fichasApostadas);
+            _jogadorDefault.EncerrarRodada(fichasGanhas);
+
+            Assert.Equal(statusEsperado, _jogadorDefault.Status);
+        }
+
+        [Fact]
+        public void NaoDevePermitirEncerrarJogadaComFichasNegativas()
+        {
+            var maoBuilder = new MaoBuilder("A;P|K;O");
+            var fichasApostadas = 1000;
+            var fichasGanhas = -1000;
+
+            _jogadorDefault.IniciarRodada(maoBuilder.CartasJogador[0], maoBuilder.CartasJogador[1]);
+            _jogadorDefault.Apostar(fichasApostadas);
+
+            var MensagemDeErro = Assert.Throws<Exception>(() => _jogadorDefault.EncerrarRodada(fichasGanhas)).Message;
+            Assert.Equal(Ressource.JogadorMsgValorFichasGanhasInvalido, MensagemDeErro);
+        }
+
+        [Fact]
+        public void DeveZerarMontanteDeFichasApostadasAoFinalDaRodada()
+        {
+            var maoBuilder = new MaoBuilder("A;P|K;O");
+            var fichasApostadas = 1000;
+            var fichasGanhas = 2000;
+            var montanteFichasApostadasEsperado = 0;
+
+            _jogadorDefault.IniciarRodada(maoBuilder.CartasJogador[0], maoBuilder.CartasJogador[1]);
+            _jogadorDefault.Apostar(fichasApostadas);
+            _jogadorDefault.EncerrarRodada(fichasGanhas);
+
+            Assert.Equal(montanteFichasApostadasEsperado, _jogadorDefault.FichasApostadas);
+        }
+
+        [Fact]
+        public void NaoDeveDarCartasAJogadorEliminado()
+        {
+            var maoBuilder = new MaoBuilder("A;P|K;O");
+            _jogadorDefault.TrocarStatus(StatusJogador.Eliminado);
+
+            _jogadorDefault.IniciarRodada(maoBuilder.CartasJogador[0], maoBuilder.CartasJogador[1]);
+
+            Assert.Null(_jogadorDefault.Mao);
         }
     }
 
@@ -193,6 +293,24 @@ namespace Poker.TexasHoldem.Test
         }
 
         /// <summary>
+        /// Inicia a rodada do jogador, caso o jogador não esteja eliminado
+        /// </summary>
+        /// <param name="carta1">Primeira carta do jogador</param>
+        /// <param name="carta2">Segunda carta do jogador</param>
+        public void IniciarRodada(Carta carta1, Carta carta2)
+        {
+            if (Status != StatusJogador.Eliminado)
+            {
+                if (Status == StatusJogador.Esperando)
+                    Status = StatusJogador.Ativo;
+
+                Mao = new Mao(carta1, carta2);
+            }
+            else
+                Mao = null;
+        }
+
+        /// <summary>
         /// Debita as fichas do jogador e retorna o valor. 
         /// </summary>
         /// <param name="fichasAposta">Fichas apostadas</param>
@@ -216,18 +334,30 @@ namespace Poker.TexasHoldem.Test
         }
 
         /// <summary>
-        /// Adiciona as fichas ao montante do jogador
+        /// Troca o status do jogador, exceto quando este for igual a Eliminado
         /// </summary>
-        /// <param name="fichas"></param>
-        public void AdicionarFichas(int fichas)
-        {
-            Fichas += fichas;
-        }
-
+        /// <param name="statusJogador">Novo status do jogador</param>
         public void TrocarStatus(StatusJogador statusJogador)
         {
             if (Status != StatusJogador.Eliminado)
                 Status = statusJogador;
+        }
+
+        /// <summary>
+        /// Encerra a jogada e atribui as fichas ganhas ao montande do jogador.
+        /// </summary>
+        /// <param name="fichasGanhas">Fichas ganhas na rodada atual</param>
+        internal void EncerrarRodada(int fichasGanhas)
+        {
+            if (fichasGanhas < 0)
+                throw new Exception(Ressource.JogadorMsgValorFichasGanhasInvalido);
+
+            Fichas += fichasGanhas;
+            FichasApostadas = 0;
+            Mao = null;
+
+            if (Status == StatusJogador.AllIn)
+                Status = fichasGanhas != 0 ? StatusJogador.Ativo : StatusJogador.Eliminado;
         }
     }
 }

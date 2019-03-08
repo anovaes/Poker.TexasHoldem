@@ -88,6 +88,7 @@ namespace Poker.TexasHoldem.Lib._Base
         public static string JogadorMsgIdInvalido = "Não é permitido jogadores com id inferior a 1";
         public static string JogadorMsgNomeObrigatorio = "É obrigatório informar o nome do jogador";
         public static string JogadorMsgNomeSuperior20Caracteres = "O nome do jogador não pode ultrapassar os 20 caracteres";
+        public static string JogadorMsgValorFichasGanhasInvalido = "Não é permitido receber quantidade de fichas negativas";
         #endregion
     }
 }
