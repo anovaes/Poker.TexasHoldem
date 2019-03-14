@@ -65,6 +65,10 @@ namespace Poker.TexasHoldem.Lib._Base
         public static StatusJogador JogadorStatusInicial = StatusJogador.Esperando;
         #endregion
 
+        #region Mesa
+        public static int MesaQuantidadeMaximaDeJogadores = 9;
+        #endregion
+
         #region Mensagem de Erro Cartas
         public static string CartaMsgFormatoInvalido = "O formato da carta não é válido.";
         public static string CartaMsgValorInvalido = "O valor da carta não é válido.";
@@ -89,6 +93,14 @@ namespace Poker.TexasHoldem.Lib._Base
         public static string JogadorMsgNomeObrigatorio = "É obrigatório informar o nome do jogador";
         public static string JogadorMsgNomeSuperior20Caracteres = "O nome do jogador não pode ultrapassar os 20 caracteres";
         public static string JogadorMsgValorFichasGanhasInvalido = "Não é permitido receber quantidade de fichas negativas";
+        #endregion
+
+        #region Mensagem de Erro Mesa
+        public static string MesaMsgIdInvalido = "Não é permitido mesas com id inferior a 1";
+        #endregion
+
+        #region Mensagem de Sucesso Mesa
+        public static string MesaMsgJogadorIncluidoComSucesso = "Jogador #0# sentou-se a mesa #1#";
         #endregion
     }
 }
