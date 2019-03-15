@@ -65,6 +65,19 @@ namespace Poker.TexasHoldem.Lib._Base
         public static StatusJogador JogadorStatusInicial = StatusJogador.Esperando;
         #endregion
 
+        #region Mao
+        public static string MaoClassificacaoRoyalFlush = "Royal Flush de #0#";
+        public static string MaoClassificacaoStraightFlush = "Straight Flush de #0#, #1# a #2#";
+        public static string MaoClassificacaoQuadra = "Quadra de #0#, kicker #1#";
+        public static string MaoClassificacaoFullHouse = "Full House de #0# e #1#";
+        public static string MaoClassificacaoFlush = "Flush de #0#. #1#, #2#, #3#, #4# e #5#";
+        public static string MaoClassificacaoSequencia = "Sequência de #0# a #1#";
+        public static string MaoClassificacaoTrinca = "Trinca de #0#, kickers #1# e #2#";
+        public static string MaoClassificacaoDoisPares = "Dois pares de #0# e #1#, kicker #2#";
+        public static string MaoClassificacaoPar = "Par de #0#, kickers #1#, #2# e #3#";
+        public static string MaoClassificacaoCartaAlta = "Carta Alta de #0#, kickers #1#, #2#, #3# e #4#";
+        #endregion
+
         #region Mesa
         public static int MesaQuantidadeMaximaDeJogadores = 9;
         #endregion

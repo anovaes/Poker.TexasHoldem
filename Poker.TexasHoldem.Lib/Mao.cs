@@ -122,7 +122,7 @@ namespace Poker.TexasHoldem.Lib
                     _cartasShowdown[4].Valor.Peso == 10 &&
                     grupo.Count() == 1)
                 {
-                    Classificacao = $"Royal Flush de {grupo.First().Key}";
+                    Classificacao = Mensagem.Gerar(Ressource.MaoClassificacaoRoyalFlush, grupo.First().Key);
                     Pontuacao = 91413121110;
                     return true;
                 }
@@ -148,7 +148,7 @@ namespace Poker.TexasHoldem.Lib
                 if (flush.Id == null)
                     return false;
 
-                return IsSequencia(_cartasShowdown.Where(c => c.Naipe.Id == flush.Id).ToList(), $"Straight Flush de {flush.Nome},", "8");
+                return IsSequencia(_cartasShowdown.Where(c => c.Naipe.Id == flush.Id).ToList(), Ressource.MaoClassificacaoStraightFlush, new List<string>{ flush.Nome }, "8");
             }
             catch (Exception ex)
             {
@@ -169,7 +169,7 @@ namespace Poker.TexasHoldem.Lib
                 if (quadra.Id != null)
                 {
                     (string Nome, string Peso) kicker = ObterKickers(_cartasShowdown, quadra.Id, 1).First();
-                    Classificacao = $"Quadra de {quadra.Plural}, kicker {kicker.Nome}";
+                    Classificacao = Mensagem.Gerar(Ressource.MaoClassificacaoQuadra, quadra.Plural, kicker.Nome);
                     Pontuacao = long.Parse($"7{Texto.Repeat(quadra.Peso, 4)}{kicker.Peso}");
                     return true;
                 }
@@ -199,7 +199,7 @@ namespace Poker.TexasHoldem.Lib
 
                 if (par.Id != null)
                 {
-                    Classificacao = $"Full House de {trinca.Plural} e {par.Plural}";
+                    Classificacao = Mensagem.Gerar(Ressource.MaoClassificacaoFullHouse, trinca.Plural, par.Plural);
                     Pontuacao = long.Parse($"6{Texto.Repeat(trinca.Peso, 3)}{Texto.Repeat(par.Peso, 2)}");
                     return true;
                 }
@@ -225,23 +225,16 @@ namespace Poker.TexasHoldem.Lib
                 if (flush.Id == null)
                     return false;
 
-                int contador = 1;
                 string pontuacao = "";
+                var complementos = new List<string> { flush.Nome };
 
                 foreach (var carta in _cartasShowdown.Where(c => c.Naipe.Id == flush.Id).Take(5))
                 {
                     pontuacao += carta.Valor.PesoTexto;
-
-                    if (contador == 1)
-                        Classificacao = $"Flush de {flush.Nome}. {carta.Valor.Nome}";
-                    else if (contador < 5)
-                        Classificacao += $", {carta.Valor.Nome}";
-                    else
-                        Classificacao += $" e {carta.Valor.Nome}";
-
-                    contador++;
+                    complementos.Add(carta.Valor.Nome);
                 }
 
+                Classificacao = Mensagem.Gerar(Mensagem.Gerar(Ressource.MaoClassificacaoFlush, complementos.ToArray()));
                 Pontuacao = long.Parse($"5{pontuacao}");
                 return true;
             }
@@ -259,7 +252,7 @@ namespace Poker.TexasHoldem.Lib
         {
             try
             {
-                return IsSequencia(_cartasShowdown.Take(7).ToList(), "Sequência de", "4");
+                return IsSequencia(_cartasShowdown.Take(7).ToList(), Ressource.MaoClassificacaoSequencia, new List<string>(), "4");
             }
             catch (Exception ex)
             {
@@ -282,7 +275,7 @@ namespace Poker.TexasHoldem.Lib
 
                 (string Nome, string Peso)[] kickers = ObterKickers(_cartasShowdown, trinca.Id, 2);
 
-                Classificacao = $"Trinca de {trinca.Plural}, kickers {kickers[0].Nome} e {kickers[1].Nome}";
+                Classificacao = Mensagem.Gerar(Ressource.MaoClassificacaoTrinca, trinca.Plural, kickers[0].Nome, kickers[1].Nome);
                 Pontuacao = long.Parse($"3{Texto.Repeat(trinca.Peso, 3)}{string.Concat(kickers[0].Peso, kickers[1].Peso)}");
                 return true;
             }
@@ -314,7 +307,7 @@ namespace Poker.TexasHoldem.Lib
                     .Where(c => c.Valor.Id != par1.Id && c.Valor.Id != par2.Id)
                     .First();
 
-                Classificacao = $"Dois pares de {par1.Plural} e {par2.Plural}, kicker {kicker.Valor.Nome}";
+                Classificacao = Mensagem.Gerar(Ressource.MaoClassificacaoDoisPares, par1.Plural, par2.Plural, kicker.Valor.Nome);
                 Pontuacao = long.Parse($"2{Texto.Repeat(par1.Peso, 2)}{Texto.Repeat(par2.Peso, 2)}{kicker.Valor.PesoTexto}");
                 return true;
             }
@@ -339,7 +332,7 @@ namespace Poker.TexasHoldem.Lib
 
                 (string Nome, string Peso)[] kickers = ObterKickers(_cartasShowdown, par.Id, 3);
 
-                Classificacao = $"Par de {par.Plural}, kickers {kickers[0].Nome}, {kickers[1].Nome} e {kickers[2].Nome}";
+                Classificacao = Mensagem.Gerar(Ressource.MaoClassificacaoPar, par.Plural, kickers[0].Nome, kickers[1].Nome, kickers[2].Nome);
                 Pontuacao = long.Parse($"1{Texto.Repeat(par.Peso, 2)}{string.Concat(kickers[0].Peso, kickers[1].Peso, kickers[2].Peso)}");
                 return true;
             }
@@ -358,24 +351,15 @@ namespace Poker.TexasHoldem.Lib
             try
             {
                 var pontuacao = "";
-                var contador = 1;
+                var complementos = new List<string>();
 
                 foreach (var carta in _cartasShowdown.Take(5).ToList())
                 {
                     pontuacao += carta.Valor.PesoTexto;
-
-                    if (contador == 1)
-                        Classificacao = $"Carta Alta de {carta.Valor.Nome}, kickers ";
-                    else if (contador == 2)
-                        Classificacao += $"{carta.Valor.Nome}";
-                    else if (contador < 5)
-                        Classificacao += $", {carta.Valor.Nome}";
-                    else
-                        Classificacao += $" e {carta.Valor.Nome}";
-
-                    contador++;
+                    complementos.Add(carta.Valor.Nome);
                 }
 
+                Classificacao = Mensagem.Gerar(Ressource.MaoClassificacaoCartaAlta, complementos.ToArray());
                 Pontuacao = long.Parse(pontuacao);
 
                 return true;
@@ -450,9 +434,10 @@ namespace Poker.TexasHoldem.Lib
         /// </summary>
         /// <param name="cartas">Cartas válidas</param>
         /// <param name="raizClassificacao">Raíz da mensagem de classificação</param>
+        /// <param name="complementoClassificacao">Itens para classificar o complemento da mensagem de classificação</param>
         /// <param name="raizPontuacao">Raiz da pontuação</param>
         /// <returns>Se for uma sequência, retorna true. Caso contrário, false </returns>
-        private bool IsSequencia(List<Carta> cartas, string raizClassificacao, string raizPontuacao)
+        private bool IsSequencia(List<Carta> cartas, string raizClassificacao, List<string> complementoClassificacao, string raizPontuacao)
         {
             string menorValor = null;
             string maiorValor = null;
@@ -510,7 +495,9 @@ namespace Poker.TexasHoldem.Lib
 
             if (quantidadeDeCartas == 5)
             {
-                Classificacao = $"{raizClassificacao} {menorValor} a {maiorValor}";
+                complementoClassificacao.Add(menorValor);
+                complementoClassificacao.Add(maiorValor);
+                Classificacao = Mensagem.Gerar(raizClassificacao, complementoClassificacao.ToArray());
                 Pontuacao = long.Parse($"{raizPontuacao}{pontuacao}");
                 return true;
             }
