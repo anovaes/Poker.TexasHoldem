@@ -57,6 +57,14 @@ namespace Poker.TexasHoldem.Test
         }
 
         [Fact]
+        public void NaoDeveIncluirNovoJogadorSeAMesaJaPossuirAQuantidadeMaximaDeJogadores()
+        {
+            var idMesaGerada = 1;
+            var nomeJogadorEsperado = "Alexandre";
+            var mesaGerada = new Mesa(idMesaGerada);
+        }
+
+        [Fact]
         public void DeveIniciarAMesa()
         {
 
