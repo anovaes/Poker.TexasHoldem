@@ -29,7 +29,7 @@ namespace Poker.TexasHoldem.Test._Builder
                     Jogador jogador = new Jogador(i, $"jogador{i}");
                     mesa.Jogadores.Add(jogador);
                 }
-
+                Mesas.Add(mesa);
             }
         }
     }

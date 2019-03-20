@@ -3,6 +3,7 @@ using Poker.TexasHoldem.Lib;
 using Poker.TexasHoldem.Lib._Base;
 using Poker.TexasHoldem.Lib._Enum;
 using Poker.TexasHoldem.Lib._Util;
+using Poker.TexasHoldem.Test._Builder;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -43,6 +44,60 @@ namespace Poker.TexasHoldem.Test
         }
 
         [Fact]
+        public void DevePermitirTrocaDeStatusDaMesa()
+        {
+            var idMesaGerada = 1;
+            var mesaGerada = new Mesa(idMesaGerada);
+            var statusEsperado = StatusMesa.Ativa;
+
+            mesaGerada.AlterarStatus(statusEsperado);
+
+            Assert.Equal(statusEsperado, mesaGerada.Status);
+        }
+
+        [Fact]
+        public void NaoDevePermitirTrocaDeStatusParaAguardandoCasoAMesaJaEstejaAtiva()
+        {
+            var idMesaGerada = 1;
+            var mesaGerada = new Mesa(idMesaGerada);
+            var statusNaoPermitido = StatusMesa.Aguardando;
+            StatusMesa statusAtual = StatusMesa.Ativa;
+            mesaGerada.AlterarStatus(statusAtual);
+
+            var mensagemDeErro = Assert.Throws<Exception>(() => mesaGerada.AlterarStatus(statusNaoPermitido)).Message;
+
+            Assert.Equal(Ressource.MesaMsgNaoPermitidoMudarStatusDeAtivaParaAguardando, mensagemDeErro);
+        }
+
+        [Fact]
+        public void NaoDevePermitirTrocaDeStatusParaAguardandoCasoAMesaJaEstejaFinalizada()
+        {
+            var idMesaGerada = 1;
+            var mesaGerada = new Mesa(idMesaGerada);
+            var statusNaoPermitido = StatusMesa.Aguardando;
+            StatusMesa statusAtual = StatusMesa.Finalizada;
+            mesaGerada.AlterarStatus(statusAtual);
+
+            var mensagemDeErro = Assert.Throws<Exception>(() => mesaGerada.AlterarStatus(statusNaoPermitido)).Message;
+
+            Assert.Equal(Ressource.MesaMsgNaoPermitidoMudarStatusDeFinalizadaParaAguardando, mensagemDeErro);
+        }
+
+        [Fact]
+        public void NaoDevePermitirTrocaDeStatusParaAtivaCasoAMesaJaEstejaFinalizada()
+        {
+            var idMesaGerada = 1;
+            var mesaGerada = new Mesa(idMesaGerada);
+            var statusNaoPermitido = StatusMesa.Ativa;
+            var statusAtual = StatusMesa.Finalizada;
+            mesaGerada.AlterarStatus(statusAtual);
+
+            var mensagemDeErro = Assert.Throws<Exception>(() => mesaGerada.AlterarStatus(statusNaoPermitido)).Message;
+
+            Assert.Equal(Ressource.MesaMsgNaoPermitidoMudarStatusDeFinalizadaParaAtiva, mensagemDeErro);
+        }
+
+        [Fact]
         public void DeveIncluirNovoJogador()
         {
             var idMesaGerada = 1;
@@ -61,8 +116,22 @@ namespace Poker.TexasHoldem.Test
         {
             var idMesaGerada = 1;
             var nomeJogadorEsperado = "Alexandre";
-            var mesaGerada = new Mesa(idMesaGerada);
+            var mesaGerada = new MesaBuilder(
+                    new List<MesaJogador> {
+                        new MesaJogador(idMesaGerada, 9)
+                    }
+                ).Mesas.FirstOrDefault();
+
+            Assert.False(mesaGerada.IncluirJogador(nomeJogadorEsperado));
         }
+
+        [Fact]
+        public void NaoDeveIncluirNovoJogadorSeOStatusDaMesaForDiferenteDeAguardando()
+        {
+
+        }
+
+
 
         [Fact]
         public void DeveIniciarAMesa()
@@ -98,15 +167,38 @@ namespace Poker.TexasHoldem.Test
         }
 
         /// <summary>
+        /// Altera o status da mesa
+        /// </summary>
+        /// <param name="status">Status para qual será mudado</param>
+        public void AlterarStatus(StatusMesa status)
+        {
+            if (status == StatusMesa.Aguardando && Status == StatusMesa.Ativa)
+                throw new Exception(Ressource.MesaMsgNaoPermitidoMudarStatusDeAtivaParaAguardando);
+
+            if (status == StatusMesa.Aguardando &&  Status == StatusMesa.Finalizada)
+                throw new Exception(Ressource.MesaMsgNaoPermitidoMudarStatusDeFinalizadaParaAguardando);
+
+            if (status == StatusMesa.Ativa && Status == StatusMesa.Finalizada)
+                throw new Exception(Ressource.MesaMsgNaoPermitidoMudarStatusDeFinalizadaParaAtiva);
+
+            Status = status;
+        }
+
+        /// <summary>
         /// Inclui um novo jogador se houver espaço na mesa. Cada mesa pode ter no máximo nove jogadores
         /// </summary>
         /// <param name="nomeJogadorEsperado">Nome do jogador que será incluído</param>
         /// <returns>Retorna true caso o jogador tenha sido incluído com sucesso. Caso contrário, false  </returns>
         public bool IncluirJogador(string nomeJogador)
         {
-            int idNovoJogador = (Jogadores.OrderByDescending(j => j.Id).FirstOrDefault()?.Id ?? 0) + 1;
-            Jogadores.Add(new Jogador(idNovoJogador, nomeJogador));
-            return true;
+            if (Jogadores.Count < 9)
+            {
+                int idNovoJogador = (Jogadores.OrderByDescending(j => j.Id).FirstOrDefault()?.Id ?? 0) + 1;
+                Jogadores.Add(new Jogador(idNovoJogador, nomeJogador));
+                return true;
+            }
+            else
+                return false;
         }
     }
 }

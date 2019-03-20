@@ -110,6 +110,9 @@ namespace Poker.TexasHoldem.Lib._Base
 
         #region Mensagem de Erro Mesa
         public static string MesaMsgIdInvalido = "Não é permitido mesas com id inferior a 1";
+        public static string MesaMsgNaoPermitidoMudarStatusDeAtivaParaAguardando = "Não é permitido alterar o status da mesa para Aguardando quando a mesma já estiver ativa.";
+        public static string MesaMsgNaoPermitidoMudarStatusDeFinalizadaParaAguardando = "Não é permitido alterar o status da mesa para Aguardando quando a mesma já estiver finalizada.";
+        public static string MesaMsgNaoPermitidoMudarStatusDeFinalizadaParaAtiva = "Não é permitido alterar o status da mesa para Ativa quando a mesma já estiver finalizada.";
         #endregion
 
         #region Mensagem de Sucesso Mesa
