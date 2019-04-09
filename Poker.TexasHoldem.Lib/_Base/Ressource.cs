@@ -113,6 +113,7 @@ namespace Poker.TexasHoldem.Lib._Base
         public static string MesaMsgNaoPermitidoMudarStatusDeAtivaParaAguardando = "Não é permitido alterar o status da mesa para Aguardando quando a mesma já estiver ativa.";
         public static string MesaMsgNaoPermitidoMudarStatusDeFinalizadaParaAguardando = "Não é permitido alterar o status da mesa para Aguardando quando a mesma já estiver finalizada.";
         public static string MesaMsgNaoPermitidoMudarStatusDeFinalizadaParaAtiva = "Não é permitido alterar o status da mesa para Ativa quando a mesma já estiver finalizada.";
+        public static string MesaMsgNaoPermitidoIniciarSemQuantidadeMinimaDeJogadores = "É necessário pelo menos dois jogadores para iniciar a partida.";
         #endregion
 
         #region Mensagem de Sucesso Mesa

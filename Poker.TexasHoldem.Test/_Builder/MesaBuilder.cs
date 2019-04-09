@@ -12,40 +12,28 @@ namespace Poker.TexasHoldem.Test._Builder
         /// <summary>
         /// Cria uma intância da MesaBuilder para uso dos testes unitários
         /// </summary>
-        /// <param name="listaMesaJogador"></param>
-        public MesaBuilder(List<MesaJogador> listaMesaJogador)
+        /// <param name="qtdJogadoresPorMesa"></param>
+        public MesaBuilder(params int[] qtdJogadoresPorMesa)
         {
             Mesas = new List<Mesa>();
+            var idMesa = 1;
 
-            foreach (var mesaJogador in listaMesaJogador)
+            foreach (var quantidade in qtdJogadoresPorMesa)
             {
-                if (mesaJogador.IdMesa == 0 || mesaJogador.QuantidadeJogadores < 0 || mesaJogador.QuantidadeJogadores > 9)
+                if (quantidade < 0 || quantidade > 9)
                     continue;
 
-                Mesa mesa = new Mesa(mesaJogador.IdMesa);
+                Mesa mesa = new Mesa(idMesa);
 
-                for (int i = 1; i <= mesaJogador.QuantidadeJogadores; i++)
+                for (int i = 1; i <= quantidade; i++)
                 {
                     Jogador jogador = new Jogador(i, $"jogador{i}");
                     mesa.Jogadores.Add(jogador);
                 }
                 Mesas.Add(mesa);
+
+                idMesa++;
             }
-        }
-    }
-
-    public class MesaJogador
-    {
-        public int IdMesa { get; private set; }
-        public int QuantidadeJogadores { get; private set; }
-
-        /// <summary>
-        /// Cria uma instância de relação id da mesa com a quantidade de jogadores da mesa
-        /// </summary>
-        public MesaJogador(int idMesa, int quantidadeJogadores)
-        {
-            IdMesa = idMesa;
-            QuantidadeJogadores = quantidadeJogadores;
         }
     }
 }

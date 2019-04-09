@@ -14,6 +14,16 @@ namespace Poker.TexasHoldem.Test
 {
     public class MesaTeste
     {
+        private readonly int _quantidadeMinimaDeJogadoresPermitidos = 2;
+        private readonly int _quantidadeMaximaDeJogadoresPermitidos = 9;
+        private readonly int _idMesaDefault = 1;
+        private readonly string _nomeJogadorDefault = "Alexandre";
+
+        public MesaTeste()
+        {
+
+        }
+
         [Fact]
         public void DeveGerarMesa()
         {
@@ -46,8 +56,7 @@ namespace Poker.TexasHoldem.Test
         [Fact]
         public void DevePermitirTrocaDeStatusDaMesa()
         {
-            var idMesaGerada = 1;
-            var mesaGerada = new Mesa(idMesaGerada);
+            var mesaGerada = new Mesa(_idMesaDefault);
             var statusEsperado = StatusMesa.Ativa;
 
             mesaGerada.AlterarStatus(statusEsperado);
@@ -58,8 +67,7 @@ namespace Poker.TexasHoldem.Test
         [Fact]
         public void NaoDevePermitirTrocaDeStatusParaAguardandoCasoAMesaJaEstejaAtiva()
         {
-            var idMesaGerada = 1;
-            var mesaGerada = new Mesa(idMesaGerada);
+            var mesaGerada = new Mesa(_idMesaDefault);
             var statusNaoPermitido = StatusMesa.Aguardando;
             StatusMesa statusAtual = StatusMesa.Ativa;
             mesaGerada.AlterarStatus(statusAtual);
@@ -72,8 +80,7 @@ namespace Poker.TexasHoldem.Test
         [Fact]
         public void NaoDevePermitirTrocaDeStatusParaAguardandoCasoAMesaJaEstejaFinalizada()
         {
-            var idMesaGerada = 1;
-            var mesaGerada = new Mesa(idMesaGerada);
+            var mesaGerada = new Mesa(_idMesaDefault);
             var statusNaoPermitido = StatusMesa.Aguardando;
             StatusMesa statusAtual = StatusMesa.Finalizada;
             mesaGerada.AlterarStatus(statusAtual);
@@ -86,8 +93,7 @@ namespace Poker.TexasHoldem.Test
         [Fact]
         public void NaoDevePermitirTrocaDeStatusParaAtivaCasoAMesaJaEstejaFinalizada()
         {
-            var idMesaGerada = 1;
-            var mesaGerada = new Mesa(idMesaGerada);
+            var mesaGerada = new Mesa(_idMesaDefault);
             var statusNaoPermitido = StatusMesa.Ativa;
             var statusAtual = StatusMesa.Finalizada;
             mesaGerada.AlterarStatus(statusAtual);
@@ -100,13 +106,11 @@ namespace Poker.TexasHoldem.Test
         [Fact]
         public void DeveIncluirNovoJogador()
         {
-            var idMesaGerada = 1;
             var idJogadorEsperado = 1;
-            var nomeJogadorEsperado = "Alexandre";
-            var novoJogadorEsperado = new Jogador(idJogadorEsperado, nomeJogadorEsperado);
-            var mesaGerada = new Mesa(idMesaGerada);
+            var novoJogadorEsperado = new Jogador(idJogadorEsperado, _nomeJogadorDefault);
+            var mesaGerada = new Mesa(_idMesaDefault);
 
-            bool jogadorIncluidoComSucesso = mesaGerada.IncluirJogador(nomeJogadorEsperado);
+            bool jogadorIncluidoComSucesso = mesaGerada.IncluirJogador(_nomeJogadorDefault);
 
             Assert.True(jogadorIncluidoComSucesso);
         }
@@ -114,29 +118,53 @@ namespace Poker.TexasHoldem.Test
         [Fact]
         public void NaoDeveIncluirNovoJogadorSeAMesaJaPossuirAQuantidadeMaximaDeJogadores()
         {
-            var idMesaGerada = 1;
-            var nomeJogadorEsperado = "Alexandre";
-            var mesaGerada = new MesaBuilder(
-                    new List<MesaJogador> {
-                        new MesaJogador(idMesaGerada, 9)
-                    }
-                ).Mesas.FirstOrDefault();
+            var mesaGerada = new MesaBuilder(_quantidadeMaximaDeJogadoresPermitidos).Mesas.FirstOrDefault();
 
-            Assert.False(mesaGerada.IncluirJogador(nomeJogadorEsperado));
+            Assert.False(mesaGerada.IncluirJogador(_nomeJogadorDefault));
         }
 
-        [Fact]
-        public void NaoDeveIncluirNovoJogadorSeOStatusDaMesaForDiferenteDeAguardando()
+        [Theory(DisplayName = "NaoDeveIncluirNovoJogadorSeOStatusDaMesaForDiferenteDeAguardando")]
+        [InlineData(StatusMesa.Ativa)]
+        [InlineData(StatusMesa.Finalizada)]
+        public void NaoDeveIncluirNovoJogadorSeOStatusDaMesaForDiferenteDeAguardando(StatusMesa statusAtualDaMesa)
         {
+            var mesaGerada = new MesaBuilder(_quantidadeMinimaDeJogadoresPermitidos).Mesas.FirstOrDefault();
+            mesaGerada.AlterarStatus(statusAtualDaMesa);
 
+            Assert.False(mesaGerada.IncluirJogador(_nomeJogadorDefault));
         }
-
-
 
         [Fact]
         public void DeveIniciarAMesa()
         {
+            var statusEsperado = StatusMesa.Ativa;
+            var mesaGerada = new MesaBuilder(_quantidadeMinimaDeJogadoresPermitidos).Mesas.FirstOrDefault();
 
+            mesaGerada.Iniciar();
+
+            Assert.Equal(statusEsperado, mesaGerada.Status);
+        }
+
+        [Fact]
+        public void NaoDeveIniciarMesaCasoHajaMenosJogadoresDoQueOPermitido()
+        {
+            var mesaGerada = new MesaBuilder(_quantidadeMinimaDeJogadoresPermitidos - 1).Mesas.FirstOrDefault();
+
+            var MensagemDeErro =  Assert.Throws<Exception>(() => mesaGerada.Iniciar()).Message;
+            Assert.Equal(Ressource.MesaMsgNaoPermitidoIniciarSemQuantidadeMinimaDeJogadores, MensagemDeErro);
+        }
+
+        [Theory(DisplayName = "NaoDeveIniciarAMesaCasoEstaJaEstejaAtiva")]
+        [InlineData(StatusMesa.Ativa)]
+        [InlineData(StatusMesa.Finalizada)]
+        public void NaoDeveIniciarAMesaCasoEstaJaEstejaAtiva(StatusMesa statusAtualDaMesa)
+        {
+            var mesaGerada = new MesaBuilder(_quantidadeMinimaDeJogadoresPermitidos).Mesas.FirstOrDefault();
+            mesaGerada.AlterarStatus(statusAtualDaMesa);
+
+            mesaGerada.Iniciar();
+
+            Assert.Equal(statusAtualDaMesa, mesaGerada.Status);
         }
     }
 
@@ -148,6 +176,9 @@ namespace Poker.TexasHoldem.Test
         public List<Carta> Cartas { get; private set; }
         public int IdJogadorDealer { get; private set; }
         public StatusMesa Status { get; private set; }
+
+        private readonly int _quantidadeMinimaDeJogadoresPermitidos = 2;
+        private readonly int _quantidadeMaximaDeJogadoresPermitidos = 9;
 
         /// <summary>
         /// Inicia uma instância de mesa.
@@ -175,7 +206,7 @@ namespace Poker.TexasHoldem.Test
             if (status == StatusMesa.Aguardando && Status == StatusMesa.Ativa)
                 throw new Exception(Ressource.MesaMsgNaoPermitidoMudarStatusDeAtivaParaAguardando);
 
-            if (status == StatusMesa.Aguardando &&  Status == StatusMesa.Finalizada)
+            if (status == StatusMesa.Aguardando && Status == StatusMesa.Finalizada)
                 throw new Exception(Ressource.MesaMsgNaoPermitidoMudarStatusDeFinalizadaParaAguardando);
 
             if (status == StatusMesa.Ativa && Status == StatusMesa.Finalizada)
@@ -191,7 +222,7 @@ namespace Poker.TexasHoldem.Test
         /// <returns>Retorna true caso o jogador tenha sido incluído com sucesso. Caso contrário, false  </returns>
         public bool IncluirJogador(string nomeJogador)
         {
-            if (Jogadores.Count < 9)
+            if (Jogadores.Count < _quantidadeMaximaDeJogadoresPermitidos && Status == StatusMesa.Aguardando)
             {
                 int idNovoJogador = (Jogadores.OrderByDescending(j => j.Id).FirstOrDefault()?.Id ?? 0) + 1;
                 Jogadores.Add(new Jogador(idNovoJogador, nomeJogador));
@@ -199,6 +230,15 @@ namespace Poker.TexasHoldem.Test
             }
             else
                 return false;
+        }
+
+        public void Iniciar()
+        {
+            if (Jogadores.Count < _quantidadeMinimaDeJogadoresPermitidos)
+                throw new Exception(Ressource.MesaMsgNaoPermitidoIniciarSemQuantidadeMinimaDeJogadores);
+
+            if (Status == StatusMesa.Aguardando)
+                AlterarStatus(StatusMesa.Ativa);
         }
     }
 }
