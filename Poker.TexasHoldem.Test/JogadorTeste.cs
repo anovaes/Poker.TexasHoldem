@@ -151,12 +151,13 @@ namespace Poker.TexasHoldem.Test
         }
 
         [Fact]
-        public void DeveIniciarJogada()
+        public void DeveReceberCartas()
         {
             var maoBuilder = new MaoBuilder("A;P|K;O");
             var quantidadeDeCartasEsperada = 2;
 
-            _jogadorDefault.IniciarRodada(maoBuilder.CartasJogador[0], maoBuilder.CartasJogador[1]);
+            _jogadorDefault.ReceberCarta(maoBuilder.CartasJogador[0]);
+            _jogadorDefault.ReceberCarta(maoBuilder.CartasJogador[1]);
 
             Assert.True(_jogadorDefault.Mao.Cartas.Any());
             Assert.Equal(quantidadeDeCartasEsperada, _jogadorDefault.Mao.Cartas.Count());
@@ -167,11 +168,9 @@ namespace Poker.TexasHoldem.Test
         [Fact]
         public void DeveEncerrarJogada()
         {
-            var maoBuilder = new MaoBuilder("A;P|K;O");
             var fichasGanhas = 500;
             var fichasTotalEsperadaComJogador = 1500;
 
-            _jogadorDefault.IniciarRodada(maoBuilder.CartasJogador[0], maoBuilder.CartasJogador[1]);
             _jogadorDefault.EncerrarRodada(fichasGanhas);
 
             Assert.Equal(fichasTotalEsperadaComJogador, _jogadorDefault.Fichas);
@@ -183,7 +182,8 @@ namespace Poker.TexasHoldem.Test
             var maoBuilder = new MaoBuilder("A;P|K;O");
             var fichasGanhas = 500;
 
-            _jogadorDefault.IniciarRodada(maoBuilder.CartasJogador[0], maoBuilder.CartasJogador[1]);
+            _jogadorDefault.ReceberCarta(maoBuilder.CartasJogador[0]);
+            _jogadorDefault.ReceberCarta(maoBuilder.CartasJogador[1]);
             _jogadorDefault.EncerrarRodada(fichasGanhas);
 
             Assert.Null(_jogadorDefault.Mao);
@@ -192,12 +192,10 @@ namespace Poker.TexasHoldem.Test
         [Fact]
         public void DeveEliminarJogadorCasoStatusForAllInENaoTenhaRecebidoNenhumaFicha()
         {
-            var maoBuilder = new MaoBuilder("A;P|K;O");
             var fichasApostadas = 1000;
             var fichasGanhas = 0;
             var statusEsperado = StatusJogador.Eliminado;
 
-            _jogadorDefault.IniciarRodada(maoBuilder.CartasJogador[0], maoBuilder.CartasJogador[1]);
             _jogadorDefault.Apostar(fichasApostadas);
             _jogadorDefault.EncerrarRodada(fichasGanhas);
 
@@ -207,12 +205,10 @@ namespace Poker.TexasHoldem.Test
         [Fact]
         public void DeveAlterarStatusDoJogadorParaAtivoCasoStatusForAllInETenhaRecebidoFicha()
         {
-            var maoBuilder = new MaoBuilder("A;P|K;O");
             var fichasApostadas = 1000;
             var fichasGanhas = 2000;
             var statusEsperado = StatusJogador.Ativo;
 
-            _jogadorDefault.IniciarRodada(maoBuilder.CartasJogador[0], maoBuilder.CartasJogador[1]);
             _jogadorDefault.Apostar(fichasApostadas);
             _jogadorDefault.EncerrarRodada(fichasGanhas);
 
@@ -222,11 +218,9 @@ namespace Poker.TexasHoldem.Test
         [Fact]
         public void NaoDevePermitirEncerrarJogadaComFichasNegativas()
         {
-            var maoBuilder = new MaoBuilder("A;P|K;O");
             var fichasApostadas = 1000;
             var fichasGanhas = -1000;
 
-            _jogadorDefault.IniciarRodada(maoBuilder.CartasJogador[0], maoBuilder.CartasJogador[1]);
             _jogadorDefault.Apostar(fichasApostadas);
 
             var MensagemDeErro = Assert.Throws<Exception>(() => _jogadorDefault.EncerrarRodada(fichasGanhas)).Message;
@@ -236,12 +230,10 @@ namespace Poker.TexasHoldem.Test
         [Fact]
         public void DeveZerarMontanteDeFichasApostadasAoFinalDaRodada()
         {
-            var maoBuilder = new MaoBuilder("A;P|K;O");
             var fichasApostadas = 1000;
             var fichasGanhas = 2000;
             var montanteFichasApostadasEsperado = 0;
 
-            _jogadorDefault.IniciarRodada(maoBuilder.CartasJogador[0], maoBuilder.CartasJogador[1]);
             _jogadorDefault.Apostar(fichasApostadas);
             _jogadorDefault.EncerrarRodada(fichasGanhas);
 
@@ -254,7 +246,8 @@ namespace Poker.TexasHoldem.Test
             var maoBuilder = new MaoBuilder("A;P|K;O");
             _jogadorDefault.TrocarStatus(StatusJogador.Eliminado);
 
-            _jogadorDefault.IniciarRodada(maoBuilder.CartasJogador[0], maoBuilder.CartasJogador[1]);
+            _jogadorDefault.ReceberCarta(maoBuilder.CartasJogador[0]);
+            _jogadorDefault.ReceberCarta(maoBuilder.CartasJogador[1]);
 
             Assert.Null(_jogadorDefault.Mao);
         }

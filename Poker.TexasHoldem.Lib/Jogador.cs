@@ -15,7 +15,7 @@ namespace Poker.TexasHoldem.Lib
         public StatusJogador Status { get; private set; }
         public Mao Mao { get; private set; }
 
-
+        private readonly List<Carta> _cartas;
         /// <summary>
         /// Inicia uma instância de jogador.
         /// </summary>
@@ -36,24 +36,22 @@ namespace Poker.TexasHoldem.Lib
             Nome = nome;
             Fichas = Ressource.JogadorFichasInicial;
             Status = Ressource.JogadorStatusInicial;
+            _cartas = new List<Carta>();
         }
 
         /// <summary>
-        /// Inicia a rodada do jogador, caso o jogador não esteja eliminado
+        /// Recebe carta durante o início da rodada
         /// </summary>
-        /// <param name="carta1">Primeira carta do jogador</param>
-        /// <param name="carta2">Segunda carta do jogador</param>
-        public void IniciarRodada(Carta carta1, Carta carta2)
+        /// <param name="carta">Carta do jogador</param>
+        public void ReceberCarta(Carta carta)
         {
-            if (Status != StatusJogador.Eliminado)
+            if(Status != StatusJogador.Eliminado && _cartas.Count < 2)
             {
-                if (Status == StatusJogador.Esperando)
-                    Status = StatusJogador.Ativo;
+                _cartas.Add(carta);
 
-                Mao = new Mao(carta1, carta2);
+                if(_cartas.Count == 2)
+                    Mao = new Mao(_cartas[0], _cartas[1]);
             }
-            else
-                Mao = null;
         }
 
         /// <summary>

@@ -34,7 +34,6 @@ namespace Poker.TexasHoldem.Test
                 Pote = 0,
                 Jogadores = new List<Jogador>(),
                 Cartas = new List<Carta>(),
-                IdJogadorDealer = 1,
                 Status = StatusMesa.Aguardando
             };
 
@@ -140,7 +139,7 @@ namespace Poker.TexasHoldem.Test
             var statusEsperado = StatusMesa.Ativa;
             var mesaGerada = new MesaBuilder(_quantidadeMinimaDeJogadoresPermitidos).Mesas.FirstOrDefault();
 
-            mesaGerada.Iniciar();
+            mesaGerada.IniciarPartida();
 
             Assert.Equal(statusEsperado, mesaGerada.Status);
         }
@@ -150,8 +149,8 @@ namespace Poker.TexasHoldem.Test
         {
             var mesaGerada = new MesaBuilder(_quantidadeMinimaDeJogadoresPermitidos - 1).Mesas.FirstOrDefault();
 
-            var MensagemDeErro =  Assert.Throws<Exception>(() => mesaGerada.Iniciar()).Message;
-            Assert.Equal(Ressource.MesaMsgNaoPermitidoIniciarSemQuantidadeMinimaDeJogadores, MensagemDeErro);
+            var MensagemDeErro = Assert.Throws<Exception>(() => mesaGerada.IniciarPartida()).Message;
+            Assert.Equal(Ressource.MesaMsgNaoPermitidoIniciarPartidaSemQuantidadeMinimaDeJogadores, MensagemDeErro);
         }
 
         [Theory(DisplayName = "NaoDeveIniciarAMesaCasoEstaJaEstejaAtiva")]
@@ -162,9 +161,61 @@ namespace Poker.TexasHoldem.Test
             var mesaGerada = new MesaBuilder(_quantidadeMinimaDeJogadoresPermitidos).Mesas.FirstOrDefault();
             mesaGerada.AlterarStatus(statusAtualDaMesa);
 
-            mesaGerada.Iniciar();
+            mesaGerada.IniciarPartida();
 
             Assert.Equal(statusAtualDaMesa, mesaGerada.Status);
+        }
+
+        [Fact]
+        public void DeveIniciarJogadaDistribuindoCartasAosJogadoresEOFlop()
+        {
+            var mesaGerada = new MesaBuilder(_quantidadeMinimaDeJogadoresPermitidos).Mesas.FirstOrDefault();
+            var quantidadeCartasDoJogador = 2;
+            var quantidadeCartasMesaPosFlop = 3;
+
+            mesaGerada.IniciarPartida();
+            mesaGerada.IniciarRodada();
+
+            foreach (var jogador in mesaGerada.Jogadores)
+            {
+                Assert.Equal(quantidadeCartasDoJogador, jogador.Mao.Cartas.Count);
+            }
+
+            Assert.Equal(quantidadeCartasMesaPosFlop, mesaGerada.Cartas.Count);
+        }
+
+        [Fact]
+        public void DeveIniciarJogadaDistribuindoCartasApenasAosJogadoresAtivos()
+        {
+            var mesaGerada = new MesaBuilder(4).Mesas.FirstOrDefault();
+            var quantidadeCartasDoJogadorAtivo = 2;
+
+            mesaGerada.Jogadores[2].TrocarStatus(StatusJogador.Eliminado);
+            mesaGerada.Jogadores[3].TrocarStatus(StatusJogador.Eliminado);
+            mesaGerada.IniciarPartida();
+            mesaGerada.IniciarRodada();
+
+            foreach (var jogadorAtivo in mesaGerada.JogadoresAtivos)
+            {
+                Assert.Equal(quantidadeCartasDoJogadorAtivo, jogadorAtivo.Mao.Cartas.Count);
+            }
+
+            foreach (var jogadorInativo in mesaGerada.Jogadores.Where(j=>j.Status == StatusJogador.Eliminado).ToList())
+            {
+                Assert.Null(jogadorInativo.Mao);
+            }
+        }
+
+        [Fact]
+        public void NaoDeveIniciarJogadaCasoANaoHajaAQuantidadeMinimaDeJogadoresAtivos()
+        {
+            var mesaGerada = new MesaBuilder(_quantidadeMinimaDeJogadoresPermitidos).Mesas.FirstOrDefault();
+
+            mesaGerada.IniciarPartida();
+            mesaGerada.Jogadores[1].TrocarStatus(StatusJogador.Eliminado);
+
+            var mensagemDeErro = Assert.Throws<Exception>(() => mesaGerada.IniciarRodada()).Message;
+            Assert.Equal(Ressource.MesaMsgNaoPermitidoIniciarRodadaSemQuantidadeMinimaDeJogadores, mensagemDeErro);
         }
     }
 
@@ -173,9 +224,15 @@ namespace Poker.TexasHoldem.Test
         public int Id { get; private set; }
         public int Pote { get; private set; }
         public List<Jogador> Jogadores { get; private set; }
+        public List<Jogador> JogadoresAtivos { get
+            {
+                return Jogadores.Where(s => s.Status != StatusJogador.Eliminado).ToList();
+            }
+        }
         public List<Carta> Cartas { get; private set; }
         public int IdJogadorDealer { get; private set; }
         public StatusMesa Status { get; private set; }
+        public Baralho Baralho { get; private set; }
 
         private readonly int _quantidadeMinimaDeJogadoresPermitidos = 2;
         private readonly int _quantidadeMaximaDeJogadoresPermitidos = 9;
@@ -193,7 +250,6 @@ namespace Poker.TexasHoldem.Test
             Pote = 0;
             Jogadores = new List<Jogador>();
             Cartas = new List<Carta>();
-            IdJogadorDealer = 1;
             Status = StatusMesa.Aguardando;
         }
 
@@ -232,13 +288,66 @@ namespace Poker.TexasHoldem.Test
                 return false;
         }
 
-        public void Iniciar()
+        /// <summary>
+        /// Inicia a partida caso esteja com status aguardando e contenha a quantidade mínima de jogadores
+        /// </summary>
+        public void IniciarPartida()
         {
             if (Jogadores.Count < _quantidadeMinimaDeJogadoresPermitidos)
-                throw new Exception(Ressource.MesaMsgNaoPermitidoIniciarSemQuantidadeMinimaDeJogadores);
+                throw new Exception(Ressource.MesaMsgNaoPermitidoIniciarPartidaSemQuantidadeMinimaDeJogadores);
 
             if (Status == StatusMesa.Aguardando)
+            {
                 AlterarStatus(StatusMesa.Ativa);
+                IdJogadorDealer = Jogadores.OrderByDescending(j=> j.Id).First().Id;
+            }
+        }
+
+        /// <summary>
+        /// Inicia rodada enquanto há a quantidade mínima de jogadores ativos na mesa
+        /// </summary>
+        public void IniciarRodada()
+        {
+            if (JogadoresAtivos.Count() < _quantidadeMinimaDeJogadoresPermitidos)
+                throw new Exception(Ressource.MesaMsgNaoPermitidoIniciarRodadaSemQuantidadeMinimaDeJogadores);
+
+            Baralho = new Baralho();
+
+            for (int i = 0; i < 2; i++)
+            {
+                foreach (var jogador in JogadoresAtivos)
+                {
+                    jogador.ReceberCarta(Baralho.DistribuirCarta());
+                }
+            }
+
+            Cartas.Add(Baralho.DistribuirCarta());
+            Cartas.Add(Baralho.DistribuirCarta());
+            Cartas.Add(Baralho.DistribuirCarta());
+        }
+
+        private void OrdenarJogadores()
+        {
+            var jogadoresAtivos = Jogadores.Where(s => s.Status != StatusJogador.Eliminado);
+            var ordemJogadores = new List<int>();
+            var idJogador = IdJogadorDealer;
+
+            do
+            {
+                ordemJogadores.Add(idJogador);
+
+                if (jogadoresAtivos.Count() == ordemJogadores.Count())
+                    break;
+
+                idJogador++;
+                while (!jogadoresAtivos.Where(j => j.Id == idJogador).Any())
+                {
+                    idJogador++;
+                    if (idJogador > _quantidadeMaximaDeJogadoresPermitidos)
+                        idJogador = 1;
+                }
+
+            } while (IdJogadorDealer != idJogador);
         }
     }
 }
