@@ -66,7 +66,7 @@ namespace Poker.TexasHoldem.Lib
             {
                 fichasAposta = Fichas;
                 Fichas = 0;
-                Status = StatusJogador.AllIn;
+                TrocarStatus(StatusJogador.AllIn);
             }
             else
             {

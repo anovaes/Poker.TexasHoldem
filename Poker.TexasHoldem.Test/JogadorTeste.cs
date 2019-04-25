@@ -144,7 +144,8 @@ namespace Poker.TexasHoldem.Test
         public void NaoTrocarStatusSeJogadorEstiverEliminado(StatusJogador novoStatusJogador)
         {
             var statusJogadorEsperado = StatusJogador.Eliminado;
-            _jogadorDefault.TrocarStatus(StatusJogador.Eliminado);
+            _jogadorDefault.TrocarStatus(statusJogadorEsperado);
+
             _jogadorDefault.TrocarStatus(novoStatusJogador);
 
             Assert.Equal(statusJogadorEsperado, _jogadorDefault.Status);

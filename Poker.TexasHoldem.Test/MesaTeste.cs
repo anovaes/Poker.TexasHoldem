@@ -200,14 +200,14 @@ namespace Poker.TexasHoldem.Test
                 Assert.Equal(quantidadeCartasDoJogadorAtivo, jogadorAtivo.Mao.Cartas.Count);
             }
 
-            foreach (var jogadorInativo in mesaGerada.Jogadores.Where(j=>j.Status == StatusJogador.Eliminado).ToList())
+            foreach (var jogadorInativo in mesaGerada.Jogadores.Where(j => j.Status == StatusJogador.Eliminado).ToList())
             {
                 Assert.Null(jogadorInativo.Mao);
             }
         }
 
         [Fact]
-        public void NaoDeveIniciarJogadaCasoANaoHajaAQuantidadeMinimaDeJogadoresAtivos()
+        public void NaoDeveIniciarJogadaCasoNaoHajaAQuantidadeMinimaDeJogadoresAtivos()
         {
             var mesaGerada = new MesaBuilder(_quantidadeMinimaDeJogadoresPermitidos).Mesas.FirstOrDefault();
 
@@ -217,6 +217,52 @@ namespace Poker.TexasHoldem.Test
             var mensagemDeErro = Assert.Throws<Exception>(() => mesaGerada.IniciarRodada()).Message;
             Assert.Equal(Ressource.MesaMsgNaoPermitidoIniciarRodadaSemQuantidadeMinimaDeJogadores, mensagemDeErro);
         }
+
+        [Theory(DisplayName = "DeveIndicarJogadorSmallBlindAoIniciarRodada")]
+        [InlineData(5, 1, 0)]
+        [InlineData(2, 1, 2)]
+        [InlineData(6, 6, 5)]
+        [InlineData(9, 1, 9)]
+        [InlineData(9, 2, 1)]
+        public void DeveIndicarJogadorSmallBlindAoIniciarRodada(int quantidadeJogadoresNaMesa, int idJogadorSmallBlindEsperado, int idJogadorSmallBlindJogadaAnterior)
+        {
+            var mesaGerada = new MesaBuilder(quantidadeJogadoresNaMesa).Mesas.FirstOrDefault();
+            mesaGerada.IniciarPartida();
+            mesaGerada.AlterarIdJogadorSmallBlind(idJogadorSmallBlindJogadaAnterior);
+            mesaGerada.IniciarRodada();
+
+            Assert.Equal(idJogadorSmallBlindEsperado, mesaGerada.IdJogadorSmallBlind);
+        }
+
+        [Theory(DisplayName = "DeveIndicarJogadorUTGAoIniciarRodada")]
+        [InlineData(2, 2)]
+        [InlineData(3, 3)]
+        [InlineData(6, 3)]
+        [InlineData(9, 3)]
+        public void DeveIndicarJogadorUTGAoIniciarRodada(int quantidadeJogadoresNaMesa, int idJogadorUTGEsperado)
+        {
+            var mesaGerada = new MesaBuilder(quantidadeJogadoresNaMesa).Mesas.FirstOrDefault();
+
+            mesaGerada.IniciarPartida();
+            mesaGerada.IniciarRodada();
+
+            Assert.Equal(idJogadorUTGEsperado, mesaGerada.IdJogadorUTG);
+        }
+
+        [Theory(DisplayName = "DeveIndicarJogadorUTGAoIniciarRodadaDePartidaEmAndamento")]
+        [InlineData(2, 2, 2)]
+        [InlineData(5, 5, 3)]
+        [InlineData(9, 6, 9)]
+        [InlineData(3, 2, 2)]
+        public void DeveIndicarJogadorUTGAoIniciarRodadaDePartidaEmAndamento(int quantidadeJogadoresNaMesa, int idJogadorSmallBlindJogadaAnterior, int idJogadorUTGEsperado)
+        {
+            var mesaGerada = new MesaBuilder(quantidadeJogadoresNaMesa).Mesas.FirstOrDefault();
+            mesaGerada.IniciarPartida();
+            mesaGerada.AlterarIdJogadorSmallBlind(idJogadorSmallBlindJogadaAnterior);
+            mesaGerada.IniciarRodada();
+
+            Assert.Equal(idJogadorUTGEsperado, mesaGerada.IdJogadorUTG);
+        }
     }
 
     public class Mesa
@@ -224,13 +270,16 @@ namespace Poker.TexasHoldem.Test
         public int Id { get; private set; }
         public int Pote { get; private set; }
         public List<Jogador> Jogadores { get; private set; }
-        public List<Jogador> JogadoresAtivos { get
+        public List<Jogador> JogadoresAtivos
+        {
+            get
             {
                 return Jogadores.Where(s => s.Status != StatusJogador.Eliminado).ToList();
             }
         }
         public List<Carta> Cartas { get; private set; }
-        public int IdJogadorDealer { get; private set; }
+        public int IdJogadorSmallBlind { get; private set; }
+        public int IdJogadorUTG { get; private set; }
         public StatusMesa Status { get; private set; }
         public Baralho Baralho { get; private set; }
 
@@ -297,10 +346,8 @@ namespace Poker.TexasHoldem.Test
                 throw new Exception(Ressource.MesaMsgNaoPermitidoIniciarPartidaSemQuantidadeMinimaDeJogadores);
 
             if (Status == StatusMesa.Aguardando)
-            {
                 AlterarStatus(StatusMesa.Ativa);
-                IdJogadorDealer = Jogadores.OrderByDescending(j=> j.Id).First().Id;
-            }
+
         }
 
         /// <summary>
@@ -321,33 +368,61 @@ namespace Poker.TexasHoldem.Test
                 }
             }
 
-            Cartas.Add(Baralho.DistribuirCarta());
-            Cartas.Add(Baralho.DistribuirCarta());
-            Cartas.Add(Baralho.DistribuirCarta());
-        }
-
-        private void OrdenarJogadores()
-        {
-            var jogadoresAtivos = Jogadores.Where(s => s.Status != StatusJogador.Eliminado);
-            var ordemJogadores = new List<int>();
-            var idJogador = IdJogadorDealer;
-
-            do
+            if (IdJogadorSmallBlind != 0)
             {
-                ordemJogadores.Add(idJogador);
-
-                if (jogadoresAtivos.Count() == ordemJogadores.Count())
-                    break;
-
-                idJogador++;
-                while (!jogadoresAtivos.Where(j => j.Id == idJogador).Any())
+                while (Jogadores.First().Id != IdJogadorSmallBlind)
                 {
-                    idJogador++;
-                    if (idJogador > _quantidadeMaximaDeJogadoresPermitidos)
-                        idJogador = 1;
+                    Jogadores.MoveFirstItemToFinal<Jogador>();
                 }
 
-            } while (IdJogadorDealer != idJogador);
+                Jogadores.MoveFirstItemToFinal<Jogador>();
+            }
+
+            IdJogadorSmallBlind = JogadoresAtivos.First().Id;
+
+            // Se houver mais do que dois jogadores pega a terceira posição da lista, caso contrário a segunda posição
+            IdJogadorUTG = JogadoresAtivos[JogadoresAtivos.Count > 2 ? 2 : 1].Id;
+
+            //Queimar Carta
+            Baralho.DistribuirCarta();
+
+            //Montar Flop
+            Cartas.Add(Baralho.DistribuirCarta());
+            Cartas.Add(Baralho.DistribuirCarta());
+            Cartas.Add(Baralho.DistribuirCarta());
         }
+
+        /// <summary>
+        /// Altera o Id do jogador na posição de Small Blind
+        /// </summary>
+        /// <param name="idJogadorSmallBlind">id do jogador na posição de small blind</param>
+        internal void AlterarIdJogadorSmallBlind(int idJogadorSmallBlind)
+        {
+            IdJogadorSmallBlind = idJogadorSmallBlind;
+        }
+
+        //private void OrdenarJogadores()
+        //{
+        //    var jogadoresAtivos = Jogadores.Where(s => s.Status != StatusJogador.Eliminado);
+        //    var ordemJogadores = new List<int>();
+        //    var idJogador = IdJogadorDealer;
+
+        //    do
+        //    {
+        //        ordemJogadores.Add(idJogador);
+
+        //        if (jogadoresAtivos.Count() == ordemJogadores.Count())
+        //            break;
+
+        //        idJogador++;
+        //        while (!jogadoresAtivos.Where(j => j.Id == idJogador).Any())
+        //        {
+        //            idJogador++;
+        //            if (idJogador > _quantidadeMaximaDeJogadoresPermitidos)
+        //                idJogador = 1;
+        //        }
+
+        //    } while (IdJogadorDealer != idJogador);
+        //}
     }
 }
