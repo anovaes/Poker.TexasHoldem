@@ -108,6 +108,10 @@ namespace Poker.TexasHoldem.Lib._Base
         public static string JogadorMsgValorFichasGanhasInvalido = "Não é permitido receber quantidade de fichas negativas";
         #endregion
 
+        #region Mesa
+        public static int MesaValorInicialBlind = 2;
+        #endregion
+
         #region Mensagem de Erro Mesa
         public static string MesaMsgIdInvalido = "Não é permitido mesas com id inferior a 1";
         public static string MesaMsgNaoPermitidoMudarStatusDeAtivaParaAguardando = "Não é permitido alterar o status da mesa para Aguardando quando a mesma já estiver ativa.";

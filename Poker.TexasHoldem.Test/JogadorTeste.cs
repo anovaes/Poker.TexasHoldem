@@ -128,7 +128,6 @@ namespace Poker.TexasHoldem.Test
 
         [Theory(DisplayName = "PermitirTrocarDeStatus")]
         [InlineData(StatusJogador.Ativo)]
-        [InlineData(StatusJogador.EmAcao)]
         [InlineData(StatusJogador.Eliminado)]
         public void PermitirTrocarDeStatus(StatusJogador statusJogadorEsperado)
         {
@@ -139,7 +138,6 @@ namespace Poker.TexasHoldem.Test
 
         [Theory(DisplayName = "NaoTrocarStatusSeJogadorEstiverEliminado")]
         [InlineData(StatusJogador.Ativo)]
-        [InlineData(StatusJogador.EmAcao)]
         [InlineData(StatusJogador.AllIn)]
         public void NaoTrocarStatusSeJogadorEstiverEliminado(StatusJogador novoStatusJogador)
         {
