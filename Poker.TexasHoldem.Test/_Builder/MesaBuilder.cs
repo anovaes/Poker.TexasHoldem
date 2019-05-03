@@ -10,7 +10,7 @@ namespace Poker.TexasHoldem.Test._Builder
     {
         private int[] _quantidadeJogadoresPorMesa;
         private bool _deveIniciarPartida;
-        private bool _deveIniciarRodada;
+        private bool _deveIniciarMao;
 
         /// <summary>
         /// Cria uma intância da MesaBuilder. (Exclusivo para uso de testes unitários)
@@ -51,12 +51,12 @@ namespace Poker.TexasHoldem.Test._Builder
         }
 
         /// <summary>
-        /// Indica se deve ativar método Iniciar Rodada
+        /// Indica se deve ativar método Iniciar Mao
         /// </summary>
         /// <returns>Instância atual</returns>
-        public MesaBuilder DeveIniciarRodada()
+        public MesaBuilder DeveIniciarMao()
         {
-            _deveIniciarRodada = true;
+            _deveIniciarMao = true;
             return this;
         }
 
@@ -91,8 +91,8 @@ namespace Poker.TexasHoldem.Test._Builder
                 if (_deveIniciarPartida)
                     mesa.IniciarPartida();
 
-                if (_deveIniciarRodada)
-                    mesa.IniciarRodada();
+                if (_deveIniciarMao)
+                    mesa.IniciarMao();
             }
 
             return mesas;

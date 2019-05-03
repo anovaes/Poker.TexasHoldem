@@ -174,12 +174,12 @@ namespace Poker.TexasHoldem.Test
         }
 
         [Fact]
-        public void DeveIniciarJogadaDistribuindoCartasAosJogadoresEOFlop()
+        public void DeveIniciarMaoDistribuindoCartasAosJogadoresEOFlop()
         {
             var quantidadeCartasDoJogador = 2;
             var quantidadeCartasMesaPosFlop = 3;
 
-            var mesaGerada = MesaBuilder.Novo().JogadoresPorMesa(_quantidadeMinimaDeJogadoresPermitidos).DeveIniciarPartida().DeveIniciarRodada().ObterPrimeiraMesa();
+            var mesaGerada = MesaBuilder.Novo().JogadoresPorMesa(_quantidadeMinimaDeJogadoresPermitidos).DeveIniciarPartida().DeveIniciarMao().ObterPrimeiraMesa();
 
             foreach (var jogador in mesaGerada.Jogadores)
             {
@@ -190,7 +190,7 @@ namespace Poker.TexasHoldem.Test
         }
 
         [Fact]
-        public void DeveIniciarJogadaDistribuindoCartasApenasAosJogadoresAtivos()
+        public void DeveIniciarMaoDistribuindoCartasApenasAosJogadoresAtivos()
         {
             var quantidadeJogadores = 4;
             var mesaGerada = MesaBuilder.Novo().JogadoresPorMesa(quantidadeJogadores).ObterPrimeiraMesa();
@@ -199,7 +199,7 @@ namespace Poker.TexasHoldem.Test
             mesaGerada.Jogadores[3].TrocarStatus(StatusJogador.Eliminado);
 
             mesaGerada.IniciarPartida();
-            mesaGerada.IniciarRodada();
+            mesaGerada.IniciarMao();
 
             foreach (var jogadorAtivo in mesaGerada.JogadoresAtivos)
             {
@@ -218,7 +218,7 @@ namespace Poker.TexasHoldem.Test
             var mesaGerada = MesaBuilder.Novo().JogadoresPorMesa(_quantidadeMinimaDeJogadoresPermitidos).DeveIniciarPartida().ObterPrimeiraMesa();
             mesaGerada.Jogadores[1].TrocarStatus(StatusJogador.Eliminado);
 
-            var mensagemDeErro = Assert.Throws<Exception>(() => mesaGerada.IniciarRodada()).Message;
+            var mensagemDeErro = Assert.Throws<Exception>(() => mesaGerada.IniciarMao()).Message;
             Assert.Equal(Ressource.MesaMsgNaoPermitidoIniciarRodadaSemQuantidadeMinimaDeJogadores, mensagemDeErro);
         }
 
@@ -228,12 +228,12 @@ namespace Poker.TexasHoldem.Test
         [InlineData(6, 6, 5)]
         [InlineData(9, 1, 9)]
         [InlineData(9, 2, 1)]
-        public void DeveIndicarJogadorSmallBlindAoIniciarRodada(int quantidadeJogadoresNaMesa, int idJogadorSmallBlindEsperado, int idJogadorSmallBlindJogadaAnterior)
+        public void DeveIndicarJogadorSmallBlindAoIniciarMao(int quantidadeJogadoresNaMesa, int idJogadorSmallBlindEsperado, int idJogadorSmallBlindJogadaAnterior)
         {
             var mesaGerada = MesaBuilder.Novo().JogadoresPorMesa(quantidadeJogadoresNaMesa).DeveIniciarPartida().ObterPrimeiraMesa();
             mesaGerada.AlterarIdJogadorSmallBlind(idJogadorSmallBlindJogadaAnterior);
 
-            mesaGerada.IniciarRodada();
+            mesaGerada.IniciarMao();
 
             Assert.Equal(idJogadorSmallBlindEsperado, mesaGerada.IdJogadorSmallBlind);
         }
@@ -243,9 +243,9 @@ namespace Poker.TexasHoldem.Test
         [InlineData(3, 3)]
         [InlineData(6, 3)]
         [InlineData(9, 3)]
-        public void DeveIndicarJogadorUTGAoIniciarRodada(int quantidadeJogadoresNaMesa, int idJogadorUTGEsperado)
+        public void DeveIndicarJogadorUTGAoIniciarMao(int quantidadeJogadoresNaMesa, int idJogadorUTGEsperado)
         {
-            var mesaGerada = MesaBuilder.Novo().JogadoresPorMesa(quantidadeJogadoresNaMesa).DeveIniciarPartida().DeveIniciarRodada().ObterPrimeiraMesa();
+            var mesaGerada = MesaBuilder.Novo().JogadoresPorMesa(quantidadeJogadoresNaMesa).DeveIniciarPartida().DeveIniciarMao().ObterPrimeiraMesa();
 
             Assert.Equal(idJogadorUTGEsperado, mesaGerada.IdJogadorUTG);
             Assert.Equal(idJogadorUTGEsperado, mesaGerada.JogadoresAtivos[0].Id);
@@ -261,17 +261,26 @@ namespace Poker.TexasHoldem.Test
             var mesaGerada = MesaBuilder.Novo().JogadoresPorMesa(quantidadeJogadoresNaMesa).DeveIniciarPartida().ObterPrimeiraMesa();
             mesaGerada.AlterarIdJogadorSmallBlind(idJogadorSmallBlindJogadaAnterior);
 
-            mesaGerada.IniciarRodada();
+            mesaGerada.IniciarMao();
 
             Assert.Equal(idJogadorUTGEsperado, mesaGerada.IdJogadorUTG);
         }
 
         [Fact]
-        public void DeveJogadorAtualEstarNuloAoIniciarRodada()
+        public void DeveJogadorAtualEstarNuloAoIniciarMao()
         {
-            var mesaGerada = MesaBuilder.Novo().JogadoresPorMesa(_quantidadeMinimaDeJogadoresPermitidos).DeveIniciarPartida().DeveIniciarRodada().ObterPrimeiraMesa();
+            var mesaGerada = MesaBuilder.Novo().JogadoresPorMesa(_quantidadeMinimaDeJogadoresPermitidos).DeveIniciarPartida().DeveIniciarMao().ObterPrimeiraMesa();
 
             Assert.Null(mesaGerada.JogadorAtual);
+        }
+
+        [Fact]
+        public void DeveApostaAtualConterOValorDoBigBlindAoIniciarMao()
+        {
+            var apostaAtualEsperada = Ressource.MesaValorInicialBlind;
+            var mesaGerada = MesaBuilder.Novo().JogadoresPorMesa(_quantidadeMinimaDeJogadoresPermitidos).DeveIniciarPartida().DeveIniciarMao().ObterPrimeiraMesa();
+
+            Assert.Equal(apostaAtualEsperada, mesaGerada.ApostaAtual);
         }
 
         [Fact]
@@ -284,7 +293,7 @@ namespace Poker.TexasHoldem.Test
             var quantidadeFichasJogadorSmallBlindEsperada = Ressource.JogadorFichasInicial - valorSmallBlindEsperado;
             var quantidadeFichasJogadorBigBlindEsperada = Ressource.JogadorFichasInicial - valorBigBlindEsperado;
 
-            var mesaGerada = MesaBuilder.Novo().JogadoresPorMesa(quantidadeJogadoresNaMesa).DeveIniciarPartida().DeveIniciarRodada().ObterPrimeiraMesa();
+            var mesaGerada = MesaBuilder.Novo().JogadoresPorMesa(quantidadeJogadoresNaMesa).DeveIniciarPartida().DeveIniciarMao().ObterPrimeiraMesa();
 
 
             var indexJogadorSmallBlind = mesaGerada.JogadoresAtivos.FindIndex(j => j.Id == mesaGerada.IdJogadorSmallBlind);
@@ -305,7 +314,7 @@ namespace Poker.TexasHoldem.Test
         public void DeveIndicarProximoJogador(int quantidadeJogadoresNaMesa, int quantidadeIteracoes, bool existeProximoJogadorEsperado, int? idJogadorAtualEsperado)
         {
             var existeProximoJogadorAtual = false;
-            var mesaGerada = MesaBuilder.Novo().JogadoresPorMesa(quantidadeJogadoresNaMesa).DeveIniciarPartida().DeveIniciarRodada().ObterPrimeiraMesa();
+            var mesaGerada = MesaBuilder.Novo().JogadoresPorMesa(quantidadeJogadoresNaMesa).DeveIniciarPartida().DeveIniciarMao().ObterPrimeiraMesa();
 
             for (int i = 0; i < quantidadeIteracoes; i++)
             {
@@ -314,6 +323,12 @@ namespace Poker.TexasHoldem.Test
 
             Assert.Equal(existeProximoJogadorEsperado, existeProximoJogadorAtual);
             Assert.Equal(idJogadorAtualEsperado, mesaGerada.JogadorAtual?.Id);
+        }
+
+        [Fact]
+        public void DeveReceberAcaoDoJogador()
+        {
+            //var mesaGerada = MesaBuilder.Novo().JogadoresPorMesa(quantidadeJogadores).DeveIniciarPartida().DeveIniciarMao().ObterPrimeiraMesa();
         }
     }
 
@@ -336,6 +351,7 @@ namespace Poker.TexasHoldem.Test
         public StatusMesa Status { get; private set; }
         public Baralho Baralho { get; private set; }
         public int ValorBlind { get; private set; }
+        public int ApostaAtual { get; private set; }
 
         private readonly int _quantidadeMinimaDeJogadoresPermitidos = 2;
         private readonly int _quantidadeMaximaDeJogadoresPermitidos = 9;
@@ -409,7 +425,7 @@ namespace Poker.TexasHoldem.Test
         /// <summary>
         /// Inicia rodada enquanto há a quantidade mínima de jogadores ativos na mesa
         /// </summary>
-        public void IniciarRodada()
+        public void IniciarMao()
         {
             if (JogadoresAtivos.Count() < _quantidadeMinimaDeJogadoresPermitidos)
                 throw new Exception(Ressource.MesaMsgNaoPermitidoIniciarRodadaSemQuantidadeMinimaDeJogadores);
@@ -435,6 +451,7 @@ namespace Poker.TexasHoldem.Test
             //Receber Blinds
             ReceberAposta(JogadoresAtivos[0], ValorBlind / 2);
             ReceberAposta(JogadoresAtivos[1], ValorBlind);
+            ApostaAtual = ValorBlind;
 
             //Queimar Carta
             Baralho.DistribuirCarta();

@@ -11,7 +11,8 @@ namespace Poker.TexasHoldem.Lib
         public int Id { get; private set; }
         public string Nome { get; private set; }
         public int Fichas { get; private set; }
-        public int FichasApostadas { get; private set; }
+        public int FichasApostadasNaMao { get; private set; }
+        public int FichasApostadasNaRodada { get; private set; }
         public StatusJogador Status { get; private set; }
         public Mao Mao { get; private set; }
 
@@ -73,7 +74,7 @@ namespace Poker.TexasHoldem.Lib
                 Fichas -= fichasAposta;
             }
 
-            FichasApostadas += fichasAposta;
+            FichasApostadasNaRodada = FichasApostadasNaMao += fichasAposta;
             return fichasAposta;
         }
 
@@ -88,16 +89,24 @@ namespace Poker.TexasHoldem.Lib
         }
 
         /// <summary>
+        /// Zera a quantidade de fichas apostadas na rodada
+        /// </summary>
+        public void ZerarFichasApostadasNaRodada()
+        {
+            FichasApostadasNaRodada = 0;
+        }
+
+        /// <summary>
         /// Encerra a jogada e atribui as fichas ganhas ao montande do jogador.
         /// </summary>
         /// <param name="fichasGanhas">Fichas ganhas na rodada atual</param>
-        internal void EncerrarRodada(int fichasGanhas)
+        public void EncerrarRodada(int fichasGanhas)
         {
             if (fichasGanhas < 0)
                 throw new Exception(Ressource.JogadorMsgValorFichasGanhasInvalido);
 
             Fichas += fichasGanhas;
-            FichasApostadas = 0;
+            FichasApostadasNaMao = 0;
             Mao = null;
 
             if (Status == StatusJogador.AllIn)

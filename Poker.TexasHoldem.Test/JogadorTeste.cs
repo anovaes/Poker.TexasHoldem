@@ -123,7 +123,7 @@ namespace Poker.TexasHoldem.Test
             _jogadorDefault.Apostar(fichasAposta2);
             _jogadorDefault.Apostar(fichasAposta3);
 
-            Assert.Equal(totalDeFichasApostadasEsperado, _jogadorDefault.FichasApostadas);
+            Assert.Equal(totalDeFichasApostadasEsperado, _jogadorDefault.FichasApostadasNaMao);
         }
 
         [Theory(DisplayName = "PermitirTrocarDeStatus")]
@@ -227,7 +227,29 @@ namespace Poker.TexasHoldem.Test
         }
 
         [Fact]
-        public void DeveZerarMontanteDeFichasApostadasAoFinalDaRodada()
+        public void DeveAumentarMontanteDeFichasApostadasNaRodada()
+        {
+            var fichasApostadas = 100;
+
+            _jogadorDefault.Apostar(fichasApostadas);
+
+            Assert.Equal(fichasApostadas, _jogadorDefault.FichasApostadasNaRodada);
+        }
+
+        [Fact]
+        public void DevePermitirZerarFichasApostadasNaRodada()
+        {
+            var fichasApostadas = 100;
+            var fichasApostadaNaRodadaEsperada = 0;
+            _jogadorDefault.Apostar(fichasApostadas);
+
+            _jogadorDefault.ZerarFichasApostadasNaRodada();
+
+            Assert.Equal(fichasApostadaNaRodadaEsperada, _jogadorDefault.FichasApostadasNaRodada);
+        }
+
+        [Fact]
+        public void DeveZerarMontanteDeFichasApostadasAoFinalDaMao()
         {
             var fichasApostadas = 1000;
             var fichasGanhas = 2000;
@@ -236,7 +258,7 @@ namespace Poker.TexasHoldem.Test
             _jogadorDefault.Apostar(fichasApostadas);
             _jogadorDefault.EncerrarRodada(fichasGanhas);
 
-            Assert.Equal(montanteFichasApostadasEsperado, _jogadorDefault.FichasApostadas);
+            Assert.Equal(montanteFichasApostadasEsperado, _jogadorDefault.FichasApostadasNaMao);
         }
 
         [Fact]
