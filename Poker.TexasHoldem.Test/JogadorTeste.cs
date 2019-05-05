@@ -272,5 +272,22 @@ namespace Poker.TexasHoldem.Test
 
             Assert.Null(_jogadorDefault.Mao);
         }
+
+        [Fact]
+        public void DeveExecutarAcaoDeFold()
+        {
+            var statusJogadorEsperado = StatusJogador.Fold;
+            var valorAposta = 10;
+            var valorApostaEsperadorAposFold = 0;
+
+            _jogadorDefault.Apostar(valorAposta);
+            _jogadorDefault.Fold();
+
+            Assert.Equal(statusJogadorEsperado, _jogadorDefault.Status);
+            Assert.Equal(valorApostaEsperadorAposFold, _jogadorDefault.FichasApostadasNaMao);
+            Assert.Equal(valorApostaEsperadorAposFold, _jogadorDefault.FichasApostadasNaRodada);
+            Assert.Null(_jogadorDefault.Mao);
+
+        }
     }
 }

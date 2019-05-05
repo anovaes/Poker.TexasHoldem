@@ -110,6 +110,11 @@ namespace Poker.TexasHoldem.Lib._Base
 
         #region Mesa
         public static int MesaValorInicialBlind = 2;
+        public static string MesaAcaoBlind = "Jogador #0# pagou #1# blind de #2# fichas";
+        public static string MesaAcaoPagar = "Jogador #0# pagou #1# fichas";
+        public static string MesaAcaoCheck = "Jogador #0# deu CHECK";
+        public static string MesaAcaoFold = "Jogador #0# deu FOLD";
+        public static string MesaAcaoRaise = "Jogador #0# deu RAISE de #1# fichas";
         #endregion
 
         #region Mensagem de Erro Mesa
@@ -119,6 +124,7 @@ namespace Poker.TexasHoldem.Lib._Base
         public static string MesaMsgNaoPermitidoMudarStatusDeFinalizadaParaAtiva = "Não é permitido alterar o status da mesa para Ativa quando a mesma já estiver finalizada.";
         public static string MesaMsgNaoPermitidoIniciarPartidaSemQuantidadeMinimaDeJogadores = "É necessário pelo menos dois jogadores para iniciar a partida.";
         public static string MesaMsgNaoPermitidoIniciarRodadaSemQuantidadeMinimaDeJogadores = "É necessário pelo menos dois jogadores para iniciar a rodada.";
+        public static string MesaMsgNaoPermitidoApostaComValorNegativo = "Não é permitido realizar apostas com valores negativos";
         #endregion
 
         #region Mensagem de Sucesso Mesa

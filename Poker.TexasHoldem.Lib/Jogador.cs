@@ -112,5 +112,16 @@ namespace Poker.TexasHoldem.Lib
             if (Status == StatusJogador.AllIn)
                 Status = fichasGanhas != 0 ? StatusJogador.Ativo : StatusJogador.Eliminado;
         }
+
+        /// <summary>
+        /// Executa ação de fold quando o jogador desiste da Mao. 
+        /// Nesta situação as cartas são descartadas, seu status é alterado para FOLD e tanto as fichas apostadas na mão como na rodada são zeradas
+        /// </summary>
+        public void Fold()
+        {
+            Mao = null;
+            TrocarStatus(StatusJogador.Fold);
+            FichasApostadasNaMao = FichasApostadasNaRodada = 0;
+        }
     }
 }
