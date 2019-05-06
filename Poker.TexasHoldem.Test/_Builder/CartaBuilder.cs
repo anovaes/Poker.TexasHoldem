@@ -9,7 +9,7 @@ namespace Poker.TexasHoldem.Test._Builder
         public List<Carta> CartasMesa { get; private set; }
 
         /// <summary>
-        /// Inicia uma instância da MaoBuilder. Apenas preenche as cartas do jogador
+        /// Inicia uma instância da CartaBuilder. Apenas preenche as cartas do jogador
         /// </summary>
         /// <param name="cartasJogador">Sequência de cartas do jogador separadas por pipe (|)</param>
         public CartaBuilder(string cartasJogador)
@@ -24,7 +24,7 @@ namespace Poker.TexasHoldem.Test._Builder
         }
 
         /// <summary>
-        /// Inicia uma instância de MaoBuilder
+        /// Inicia uma instância de CartaBuilder
         /// </summary>
         /// <param name="cartasJogador">Sequência de cartas do jogador separadas por pipe (|)</param>
         /// <param name="cartasMesa">Sequência de cartas da mesa separadas por pipe (|)</param>
