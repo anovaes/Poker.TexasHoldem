@@ -152,16 +152,16 @@ namespace Poker.TexasHoldem.Test
         [Fact]
         public void DeveReceberCartas()
         {
-            var maoBuilder = new MaoBuilder("A;P|K;O");
+            var cartaBuilder = new CartaBuilder("A;P|K;O");
             var quantidadeDeCartasEsperada = 2;
 
-            _jogadorDefault.ReceberCarta(maoBuilder.CartasJogador[0]);
-            _jogadorDefault.ReceberCarta(maoBuilder.CartasJogador[1]);
+            _jogadorDefault.ReceberCarta(cartaBuilder.CartasJogador[0]);
+            _jogadorDefault.ReceberCarta(cartaBuilder.CartasJogador[1]);
 
             Assert.True(_jogadorDefault.Mao.Cartas.Any());
             Assert.Equal(quantidadeDeCartasEsperada, _jogadorDefault.Mao.Cartas.Count());
-            Assert.Equal(maoBuilder.CartasJogador[0].Id, _jogadorDefault.Mao.Cartas[0].Id);
-            Assert.Equal(maoBuilder.CartasJogador[1].Id, _jogadorDefault.Mao.Cartas[1].Id);
+            Assert.Equal(cartaBuilder.CartasJogador[0].Id, _jogadorDefault.Mao.Cartas[0].Id);
+            Assert.Equal(cartaBuilder.CartasJogador[1].Id, _jogadorDefault.Mao.Cartas[1].Id);
         }
 
         [Fact]
@@ -178,11 +178,11 @@ namespace Poker.TexasHoldem.Test
         [Fact]
         public void DeveLimparAMaoDoJogadorAposEncerrarAJogada()
         {
-            var maoBuilder = new MaoBuilder("A;P|K;O");
+            var cartaBuilder = new CartaBuilder("A;P|K;O");
             var fichasGanhas = 500;
 
-            _jogadorDefault.ReceberCarta(maoBuilder.CartasJogador[0]);
-            _jogadorDefault.ReceberCarta(maoBuilder.CartasJogador[1]);
+            _jogadorDefault.ReceberCarta(cartaBuilder.CartasJogador[0]);
+            _jogadorDefault.ReceberCarta(cartaBuilder.CartasJogador[1]);
             _jogadorDefault.EncerrarRodada(fichasGanhas);
 
             Assert.Null(_jogadorDefault.Mao);
@@ -264,11 +264,11 @@ namespace Poker.TexasHoldem.Test
         [Fact]
         public void NaoDeveDarCartasAJogadorEliminado()
         {
-            var maoBuilder = new MaoBuilder("A;P|K;O");
+            var cartaBuilder = new CartaBuilder("A;P|K;O");
             _jogadorDefault.TrocarStatus(StatusJogador.Eliminado);
 
-            _jogadorDefault.ReceberCarta(maoBuilder.CartasJogador[0]);
-            _jogadorDefault.ReceberCarta(maoBuilder.CartasJogador[1]);
+            _jogadorDefault.ReceberCarta(cartaBuilder.CartasJogador[0]);
+            _jogadorDefault.ReceberCarta(cartaBuilder.CartasJogador[1]);
 
             Assert.Null(_jogadorDefault.Mao);
         }

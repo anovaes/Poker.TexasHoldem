@@ -177,10 +177,10 @@ namespace Poker.TexasHoldem.Test
         }
 
         [Fact]
-        public void DeveIniciarMaoDistribuindoCartasAosJogadoresEOFlop()
+        public void DeveIniciarMaoDistribuindoCartasAosJogadores()
         {
             var quantidadeCartasDoJogador = 2;
-            var quantidadeCartasMesaPosFlop = 3;
+            var quantidadeCartasMesa = 0;
 
             var mesaGerada = MesaBuilder.Novo().JogadoresPorMesa(_quantidadeMinimaDeJogadoresPermitidos).DeveIniciarPartida().DeveIniciarMao().ObterPrimeiraMesa();
 
@@ -189,7 +189,7 @@ namespace Poker.TexasHoldem.Test
                 Assert.Equal(quantidadeCartasDoJogador, jogador.Mao.Cartas.Count);
             }
 
-            Assert.Equal(quantidadeCartasMesaPosFlop, mesaGerada.Cartas.Count);
+            Assert.Equal(quantidadeCartasMesa, mesaGerada.Cartas.Count);
         }
 
         [Fact]
@@ -407,42 +407,56 @@ namespace Poker.TexasHoldem.Test
         }
 
         [Fact]
-        public void DeveCompreenderAcaoDeRaiseQuandoJogadorRealizarApostaSuperiorQueADaMesa()
+        public void DeveReordenarListaDeJogadoresAposRaise()
         {
-            var valorAposta = 4;
             var quantidadeJogadores = 3;
-            var statusJogadorEsperado = StatusJogador.Raise;
-            var valorPoteEsperado = _valorBigBlindEsperado + _valorSmallBlindEsperado + valorAposta;
+            var valorApostaUTG = 2;
+            var valorApostaRaise = 3;
+            var idPrimeiroJogadorListaAntesDoRaiseEsperado = 3;
+            var idPrimeiroJogadorListaDepoisDoRaiseEsperado = 1;
+            var valorApostaAtualAposRaise = 4;
             var mesaGerada = MesaBuilder.Novo().JogadoresPorMesa(quantidadeJogadores).DeveIniciarPartida().DeveIniciarMao().ObterPrimeiraMesa();
 
-            mesaGerada.TentarIndicarProximoJogador();
-            var mensagemEsperada = Mensagem.Gerar(Ressource.MesaAcaoRaise, mesaGerada.JogadorAtual.Nome, valorAposta.ToString());
-            var mensagemAtual = mesaGerada.ReceberAposta(valorAposta);
+            Assert.Equal(idPrimeiroJogadorListaAntesDoRaiseEsperado, mesaGerada.Jogadores.First().Id);
 
-            Assert.Equal(mensagemEsperada, mensagemAtual);
-            Assert.Equal(valorPoteEsperado, mesaGerada.Pote);
-            Assert.Equal(statusJogadorEsperado, mesaGerada.JogadorAtual.Status);
+            mesaGerada.TentarIndicarProximoJogador();
+            mesaGerada.ReceberAposta(valorApostaUTG);
+            mesaGerada.TentarIndicarProximoJogador();
+            mesaGerada.ReceberAposta(valorApostaRaise);
+
+            Assert.Equal(idPrimeiroJogadorListaDepoisDoRaiseEsperado, mesaGerada.Jogadores.First().Id);
+            Assert.Equal(valorApostaAtualAposRaise, mesaGerada.ApostaAtual);
         }
 
         [Fact]
-        public void DeveTrocarJogadorRaise()
+        public void DeveReordenarListaDeJogadoresAposDoisRaisesEmSequencia()
         {
-            var quantidadeJogadores = 4;
-            var quantidadeJogadoresComStatusRaiseEsperado = 1;
-            var valorApostaPrimeiroRaise = 4;
-            var valorApostaSegundoRaise = 8;
-            var IdJogadorRaiseEsperado = 4;
-            var valorPoteEsperado = _valorBigBlindEsperado + _valorSmallBlindEsperado + valorApostaPrimeiroRaise + valorApostaSegundoRaise;
+            var quantidadeJogadores = 3;
+            var valorApostaUTG = 2;
+            var valorApostaRaiseSmallBlind = 3;
+            var valorApostaRaiseBigBlind = 4;
+            var idPrimeiroJogadorListaAntesDoRaiseEsperado = 3;
+            var idPrimeiroJogadorListaDepoisDoPrimeiroRaiseEsperado = 1;
+            var idPrimeiroJogadorListaDepoisDoSegundoRaiseEsperado = 2;
+            var valorApostaAtualAposPrimeiroRaise = 4;
+            var valorApostaAtualAposSegundoRaise = 6;
             var mesaGerada = MesaBuilder.Novo().JogadoresPorMesa(quantidadeJogadores).DeveIniciarPartida().DeveIniciarMao().ObterPrimeiraMesa();
 
-            mesaGerada.TentarIndicarProximoJogador();
-            mesaGerada.ReceberAposta(valorApostaPrimeiroRaise);
-            mesaGerada.TentarIndicarProximoJogador();
-            mesaGerada.ReceberAposta(valorApostaSegundoRaise);
+            Assert.Equal(idPrimeiroJogadorListaAntesDoRaiseEsperado, mesaGerada.Jogadores.First().Id);
 
-            Assert.Equal(valorPoteEsperado, mesaGerada.Pote);
-            Assert.Equal(quantidadeJogadoresComStatusRaiseEsperado, mesaGerada.Jogadores.Where(j => j.Status == StatusJogador.Raise).Count());
-            Assert.Equal(IdJogadorRaiseEsperado, mesaGerada.Jogadores.Where(j => j.Status == StatusJogador.Raise).First().Id);
+            mesaGerada.TentarIndicarProximoJogador();
+            mesaGerada.ReceberAposta(valorApostaUTG);
+            mesaGerada.TentarIndicarProximoJogador();
+            mesaGerada.ReceberAposta(valorApostaRaiseSmallBlind);
+
+            Assert.Equal(idPrimeiroJogadorListaDepoisDoPrimeiroRaiseEsperado, mesaGerada.Jogadores.First().Id);
+            Assert.Equal(valorApostaAtualAposPrimeiroRaise, mesaGerada.ApostaAtual);
+
+            mesaGerada.TentarIndicarProximoJogador();
+            mesaGerada.ReceberAposta(valorApostaRaiseBigBlind);
+
+            Assert.Equal(idPrimeiroJogadorListaDepoisDoSegundoRaiseEsperado, mesaGerada.Jogadores.First().Id);
+            Assert.Equal(valorApostaAtualAposSegundoRaise, mesaGerada.ApostaAtual);
         }
 
         [Fact]
@@ -454,6 +468,109 @@ namespace Poker.TexasHoldem.Test
 
             var mensagemAtual = Assert.Throws<Exception>(() => mesaGerada.ReceberAposta(valorApostaInvalido)).Message;
             Assert.Equal(Ressource.MesaMsgNaoPermitidoApostaComValorNegativo, mensagemAtual);
+        }
+
+        [Fact]
+        public void DeveIniciarFlop()
+        {
+            var quantidadeJogadores = 3;
+            var apostas = new int[] { 2, 1, 0 };
+            var quantidadeCartasMesaPosFlop = 3;
+            var indice = 0;
+            var valorApostaAtualEsperado = 0;
+            var fichasApostadasNaRodadaEsperado = 0;
+            var idJogadorPrimeiroDaLista = 1;
+            var mesaGerada = MesaBuilder.Novo().JogadoresPorMesa(quantidadeJogadores).DeveIniciarPartida().DeveIniciarMao().ObterPrimeiraMesa();
+
+            while (mesaGerada.TentarIndicarProximoJogador())
+            {
+                mesaGerada.ReceberAposta(apostas[indice]);
+                indice++;
+            }
+
+            var retorno = mesaGerada.Flop();
+
+            Assert.True(retorno);
+            Assert.Equal(quantidadeCartasMesaPosFlop, mesaGerada.Cartas.Count);
+            Assert.Equal(idJogadorPrimeiroDaLista, mesaGerada.JogadoresAtivos.First().Id);
+            Assert.Equal(valorApostaAtualEsperado, mesaGerada.ApostaAtual);
+
+            foreach (var jogador in mesaGerada.JogadoresAtivos)
+            {
+                Assert.Equal(fichasApostadasNaRodadaEsperado, jogador.FichasApostadasNaRodada);
+            }
+        }
+
+        [Fact]
+        public void DeveRetornarFalsePorFaltaDeJogadoresAtivosAoIniciarFlop()
+        {
+            var quantidadeJogadores = 3;
+            var apostaDefault = 0;
+            var mesaGerada = MesaBuilder.Novo().JogadoresPorMesa(quantidadeJogadores).DeveIniciarPartida().DeveIniciarMao().ObterPrimeiraMesa();
+
+            while (mesaGerada.TentarIndicarProximoJogador())
+            {
+                mesaGerada.ReceberAposta(apostaDefault);
+            }
+
+            var retorno = mesaGerada.Flop();
+
+            Assert.False(retorno);
+        }
+
+        [Fact]
+        public void NaoDevePermitirIniciarFlopSemQueTodosJogadoresAtivosTenhamRealizadoApostas()
+        {
+            var quantidadeJogadores = 3;
+            var mesaGerada = MesaBuilder.Novo().JogadoresPorMesa(quantidadeJogadores).DeveIniciarPartida().DeveIniciarMao().ObterPrimeiraMesa();
+
+            var mensagemDeErro = Assert.Throws<Exception>(() => mesaGerada.Flop()).Message;
+            Assert.Equal(Ressource.MesaMsgNaoPermitidoIniciarFlopSemApostasMinimas, mensagemDeErro);
+        }
+
+        [Fact]
+        public void DeveIniciarTurn()
+        {
+            var quantidadeJogadores = 3;
+            var apostas = new int[] { 2, 1, 0 };
+            var quantidadeCartasMesaPosTurn = 4;
+            var indice = 0;
+            var mesaGerada = MesaBuilder.Novo().JogadoresPorMesa(quantidadeJogadores).DeveIniciarPartida().DeveIniciarMao().ObterPrimeiraMesa();
+
+            while (mesaGerada.TentarIndicarProximoJogador())
+            {
+                mesaGerada.ReceberAposta(apostas[indice]);
+                indice++;
+            }
+
+            mesaGerada.Flop();
+            var retorno = mesaGerada.Turn();
+
+            Assert.True(retorno);
+            Assert.Equal(quantidadeCartasMesaPosTurn, mesaGerada.Cartas.Count);
+        }
+
+        [Fact]
+        public void DeveIniciarRiver()
+        {
+            var quantidadeJogadores = 3;
+            var apostas = new int[] { 2, 1, 0 };
+            var quantidadeCartasMesaPosTurn = 5;
+            var indice = 0;
+            var mesaGerada = MesaBuilder.Novo().JogadoresPorMesa(quantidadeJogadores).DeveIniciarPartida().DeveIniciarMao().ObterPrimeiraMesa();
+
+            while (mesaGerada.TentarIndicarProximoJogador())
+            {
+                mesaGerada.ReceberAposta(apostas[indice]);
+                indice++;
+            }
+
+            mesaGerada.Flop();
+            mesaGerada.Turn();
+            var retorno = mesaGerada.River();
+
+            Assert.True(retorno);
+            Assert.Equal(quantidadeCartasMesaPosTurn, mesaGerada.Cartas.Count);
         }
     }
 
@@ -585,14 +702,6 @@ namespace Poker.TexasHoldem.Test
 
             ApostaAtual = ValorBlind;
 
-            //Queimar Carta
-            Baralho.DistribuirCarta();
-
-            //Montar Flop
-            Cartas.Add(Baralho.DistribuirCarta());
-            Cartas.Add(Baralho.DistribuirCarta());
-            Cartas.Add(Baralho.DistribuirCarta());
-
             // Se houver mais do que dois jogadores pega a terceira posição da lista, caso contrário a segunda posição
             IdJogadorUTG = JogadoresAtivos[JogadoresAtivos.Count > 2 ? 2 : 0].Id;
 
@@ -664,16 +773,77 @@ namespace Poker.TexasHoldem.Test
                     mensagem = Mensagem.Gerar(Ressource.MesaAcaoBlind, JogadorAtual.Nome, blind, fichas.ToString());
                 else if (aposta > ApostaAtual)
                 {
-                    Jogadores.Where(j => j.Status == StatusJogador.Raise).FirstOrDefault()?.TrocarStatus(StatusJogador.Ativo);
-                    JogadorAtual.TrocarStatus(StatusJogador.Raise);
+                    ApostaAtual = aposta;
+                    OrdenarJogadores(JogadorAtual.Id);
                     mensagem = Mensagem.Gerar(Ressource.MesaAcaoRaise, JogadorAtual.Nome, fichas.ToString());
                 }
                 else
                     mensagem = Mensagem.Gerar(Ressource.MesaAcaoPagar, JogadorAtual.Nome, fichas.ToString());
             }
-                
+
 
             return mensagem;
+        }
+
+        /// <summary>
+        /// Abre o flop e reordena a lista de jogadores
+        /// </summary>
+        /// <returns>Retorna true caso haja jogadores suficientes para realizar o flop. Caso contrário, false</returns>
+        public bool Flop()
+        {
+            return RenovarRodadaDeApostas(3);
+        }
+
+        /// <summary>
+        /// Abre o turn e reordena a lista de jogadores
+        /// </summary>
+        /// <returns>Retorna true caso haja jogadores suficientes para realizar o turn. Caso contrário, false</returns>
+        public bool Turn()
+        {
+            return RenovarRodadaDeApostas(1);
+        }
+
+        /// <summary>
+        /// Abre o river e reordena a lista de jogadores
+        /// </summary>
+        /// <returns>Retorna true caso haja jogadores suficientes para realizar o river. Caso contrário, false</returns>
+        public bool River()
+        {
+            return RenovarRodadaDeApostas(1);
+        }
+
+        /// <summary>
+        /// Abre cartas comunitárias e reordena a lista de jogadores
+        /// </summary>
+        /// <param name="quantidadeCartasComunitarias">Quantidade de cartas comunitárias abertas na mesa</param>
+        /// <returns>Retorna true caso haja jogadores suficientes para realizar a rodada. Caso contrário, false</returns>
+        private bool RenovarRodadaDeApostas(int quantidadeCartasComunitarias)
+        {
+            if (JogadoresAtivos.Count < _quantidadeMinimaDeJogadoresPermitidos)
+                return false;
+
+            foreach (var jogador in JogadoresAtivos)
+            {
+                if (jogador.FichasApostadasNaRodada < ApostaAtual)
+                    throw new Exception(Ressource.MesaMsgNaoPermitidoIniciarFlopSemApostasMinimas);
+                else
+                    jogador.ZerarFichasApostadasNaRodada();
+            }
+
+            OrdenarJogadores(IdJogadorSmallBlind);
+
+            //Queimar Carta
+            Baralho.DistribuirCarta();
+
+            //Montar Flop
+            for (int i = 0; i < quantidadeCartasComunitarias; i++)
+            {
+                Cartas.Add(Baralho.DistribuirCarta());
+            }
+
+            ApostaAtual = 0;
+
+            return true;
         }
 
         private void OrdenarJogadores(int idJogador)

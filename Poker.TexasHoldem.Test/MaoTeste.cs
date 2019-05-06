@@ -99,10 +99,10 @@ namespace Poker.TexasHoldem.Test
         [InlineData("A;C|4;O", "7;P|Q;E|3;C|2;O|8;E", 1412080704, "Carta Alta de ÁS, kickers DAMA, OITO, SETE e QUATRO")]
         public void DeveClassificarEGerarPontuacaoDaJogada(string cartasJogador, string cartasMesa, long pontuacaoEsperada, string classificacaoEsperada)
         {
-            var maoBuilderGerada = new MaoBuilder(cartasJogador, cartasMesa);
-            var maoGerada = new Mao(maoBuilderGerada.CartasJogador[0], maoBuilderGerada.CartasJogador[1]);
+            var cartaBuilderGerada = new CartaBuilder(cartasJogador, cartasMesa);
+            var maoGerada = new Mao(cartaBuilderGerada.CartasJogador[0], cartaBuilderGerada.CartasJogador[1]);
 
-            maoGerada.Classificar(maoBuilderGerada.CartasMesa);
+            maoGerada.Classificar(cartaBuilderGerada.CartasMesa);
 
             Assert.Equal(classificacaoEsperada, maoGerada.Classificacao);
             Assert.Equal(pontuacaoEsperada, maoGerada.Pontuacao);
@@ -111,10 +111,10 @@ namespace Poker.TexasHoldem.Test
         [Fact]
         public void NaoDeveGerarClassificacaoCasoHajaCartasDuplicadas()
         {
-            var maoBuilderGerada = new MaoBuilder("A;O|K;C", "Q;C|10;C|K;C|8;P|A;O");
-            var maoGerada = new Mao(maoBuilderGerada.CartasJogador[0], maoBuilderGerada.CartasJogador[1]);
+            var cartaBuilderGerada = new CartaBuilder("A;O|K;C", "Q;C|10;C|K;C|8;P|A;O");
+            var maoGerada = new Mao(cartaBuilderGerada.CartasJogador[0], cartaBuilderGerada.CartasJogador[1]);
 
-            string mensagemDeErro = Assert.Throws<Exception>(() => maoGerada.Classificar(maoBuilderGerada.CartasMesa)).Message;
+            string mensagemDeErro = Assert.Throws<Exception>(() => maoGerada.Classificar(cartaBuilderGerada.CartasMesa)).Message;
             Assert.Equal($"{Ressource.MaoMsgCartasClassificacaoDuplicadas} A;O|K;C", mensagemDeErro);
         }
     }

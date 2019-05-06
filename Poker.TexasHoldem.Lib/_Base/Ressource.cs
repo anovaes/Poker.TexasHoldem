@@ -125,6 +125,7 @@ namespace Poker.TexasHoldem.Lib._Base
         public static string MesaMsgNaoPermitidoIniciarPartidaSemQuantidadeMinimaDeJogadores = "É necessário pelo menos dois jogadores para iniciar a partida.";
         public static string MesaMsgNaoPermitidoIniciarRodadaSemQuantidadeMinimaDeJogadores = "É necessário pelo menos dois jogadores para iniciar a rodada.";
         public static string MesaMsgNaoPermitidoApostaComValorNegativo = "Não é permitido realizar apostas com valores negativos";
+        public static string MesaMsgNaoPermitidoIniciarFlopSemApostasMinimas = "Não é permitido abrir o Flop antes que todos os jogadores tenham realizado as apostas mínimas.";
         #endregion
 
         #region Mensagem de Sucesso Mesa
