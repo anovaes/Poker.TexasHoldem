@@ -145,6 +145,19 @@ namespace Poker.TexasHoldem.Test
             Assert.Equal(statusEsperado, mesaGerada.Status);
         }
 
+        [Theory(DisplayName ="NaoDeveIniciarMaoCasoAlgumaJogadaDaMesaTenhaSidoAcionada")]
+        [InlineData("pre")]
+        [InlineData("flop")]
+        [InlineData("turn")]
+        [InlineData("river")]
+        public void NaoDeveIniciarMaoCasoAlgumaJogadaDaMesaJaTenhaSidoAcionada(string jogada)
+        {
+            var mesaGerada = MesaBuilder.Novo().JogadoresPorMesa(_quantidadeMinimaDeJogadoresPermitidos).DeveIniciarPartida().AlterarStatusJogadaMesa(jogada, true).ObterPrimeiraMesa();
+
+            var mensagemDeErro = Assert.Throws<Exception>(() => mesaGerada.IniciarMao()).Message;
+            Assert.Equal(Ressource.MesaMsgPreFlopExecutadoAposOutraJogadaDeMesa, mensagemDeErro);
+        }
+
         [Fact]
         public void NaoDeveIniciarMesaCasoHajaMenosJogadoresDoQueOPermitido()
         {
@@ -216,7 +229,7 @@ namespace Poker.TexasHoldem.Test
         }
 
         [Fact]
-        public void NaoDeveIniciarJogadaCasoNaoHajaAQuantidadeMinimaDeJogadoresAtivos()
+        public void NaoDeveIniciarMaoCasoNaoHajaAQuantidadeMinimaDeJogadoresAtivos()
         {
             var mesaGerada = MesaBuilder.Novo().JogadoresPorMesa(_quantidadeMinimaDeJogadoresPermitidos).DeveIniciarPartida().ObterPrimeiraMesa();
             mesaGerada.Jogadores[1].TrocarStatus(StatusJogador.Eliminado);
@@ -594,6 +607,11 @@ namespace Poker.TexasHoldem.Test
         public Baralho Baralho { get; private set; }
         public int ValorBlind { get; private set; }
         public int ApostaAtual { get; private set; }
+        public bool PreFlopExecutado { get; private set; }
+        public bool FlopExecutado { get; private set; }
+        public bool TurnExecutado { get; set; }
+        public bool RiverExecutado { get; set; }
+        
 
         private readonly int _quantidadeMinimaDeJogadoresPermitidos = 2;
         private readonly int _quantidadeMaximaDeJogadoresPermitidos = 9;
@@ -669,6 +687,9 @@ namespace Poker.TexasHoldem.Test
         /// </summary>
         public string IniciarMao()
         {
+            if (!PreFlopExecutado && !FlopExecutado && !TurnExecutado && !RiverExecutado)
+                throw new Exception(Ressource.MesaMsgPreFlopExecutadoAposOutraJogadaDeMesa);
+
             if (JogadoresAtivos.Count() < _quantidadeMinimaDeJogadoresPermitidos)
                 throw new Exception(Ressource.MesaMsgNaoPermitidoIniciarRodadaSemQuantidadeMinimaDeJogadores);
 
@@ -861,6 +882,32 @@ namespace Poker.TexasHoldem.Test
         internal void AlterarIdJogadorSmallBlind(int idJogadorSmallBlind)
         {
             IdJogadorSmallBlind = idJogadorSmallBlind;
+        }
+
+        /// <summary>
+        /// Método utilizado apenas em classes de teste para realizar a simulação de uma jogada executada
+        /// </summary>
+        /// <param name="jogada">nome da jogada (pre, flop, turn, river)</param>
+        /// <param name="status">valor booleano do status da jogada</param>
+        internal void AlterarExecucaoDeJogadas(string jogada, bool status)
+        {
+            switch (jogada)
+            {
+                case "pre":
+                    PreFlopExecutado = status;
+                    break;
+                case "flop":
+                    FlopExecutado = status;
+                    break;
+                case "turn":
+                    TurnExecutado = status;
+                    break;
+                case "river":
+                    RiverExecutado = status;
+                    break;
+                default:
+                    break;
+            }
         }
     }
 }

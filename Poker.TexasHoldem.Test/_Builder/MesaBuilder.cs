@@ -11,6 +11,8 @@ namespace Poker.TexasHoldem.Test._Builder
         private int[] _quantidadeJogadoresPorMesa;
         private bool _deveIniciarPartida;
         private bool _deveIniciarMao;
+        private string _jogadaMesa;
+        private bool _statusJogadaMesa;
 
         /// <summary>
         /// Cria uma intância da MesaBuilder. (Exclusivo para uso de testes unitários)
@@ -61,6 +63,19 @@ namespace Poker.TexasHoldem.Test._Builder
         }
 
         /// <summary>
+        /// Indica qual status de jogada será alterado
+        /// </summary>
+        /// <param name="jogada">Jogada da mesa</param>
+        /// <param name="status">valor do status</param>
+        /// <returns></returns>
+        public MesaBuilder AlterarStatusJogadaMesa(string jogada, bool status)
+        {
+            _jogadaMesa = jogada;
+            _statusJogadaMesa = status;
+            return this;
+        }
+
+        /// <summary>
         /// Monta a lista de mesas com base nas informações anteriores
         /// </summary>
         /// <returns>Lista de mesas geradas</returns>
@@ -93,6 +108,9 @@ namespace Poker.TexasHoldem.Test._Builder
 
                 if (_deveIniciarMao)
                     mesa.IniciarMao();
+
+                if (!string.IsNullOrEmpty(_jogadaMesa))
+                    mesa.AlterarExecucaoDeJogadas(_jogadaMesa, _statusJogadaMesa);
             }
 
             return mesas;
