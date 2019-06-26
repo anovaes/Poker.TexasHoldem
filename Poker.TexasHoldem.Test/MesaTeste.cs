@@ -145,7 +145,7 @@ namespace Poker.TexasHoldem.Test
             Assert.Equal(statusEsperado, mesaGerada.Status);
         }
 
-        [Theory(DisplayName ="NaoDeveIniciarMaoCasoAlgumaJogadaDaMesaTenhaSidoAcionada")]
+        [Theory(DisplayName = "NaoDeveIniciarMaoCasoAlgumaJogadaDaMesaTenhaSidoAcionada")]
         [InlineData("pre")]
         [InlineData("flop")]
         [InlineData("turn")]
@@ -188,6 +188,17 @@ namespace Poker.TexasHoldem.Test
 
             Assert.Equal(statusAtualDaMesa, mesaGerada.Status);
         }
+
+        [Fact]
+        public void DeveIniciarMao()
+        {
+            var mesaGerada = MesaBuilder.Novo().JogadoresPorMesa(_quantidadeMinimaDeJogadoresPermitidos).DeveIniciarPartida().ObterPrimeiraMesa();
+
+            mesaGerada.IniciarMao();
+
+            Assert.True(mesaGerada.PreFlopExecutado);
+        }
+
 
         [Fact]
         public void DeveIniciarMaoDistribuindoCartasAosJogadores()
@@ -504,6 +515,7 @@ namespace Poker.TexasHoldem.Test
             var retorno = mesaGerada.Flop();
 
             Assert.True(retorno);
+            Assert.True(mesaGerada.FlopExecutado);
             Assert.Equal(quantidadeCartasMesaPosFlop, mesaGerada.Cartas.Count);
             Assert.Equal(idJogadorPrimeiroDaLista, mesaGerada.JogadoresAtivos.First().Id);
             Assert.Equal(valorApostaAtualEsperado, mesaGerada.ApostaAtual);
@@ -539,6 +551,35 @@ namespace Poker.TexasHoldem.Test
 
             var mensagemDeErro = Assert.Throws<Exception>(() => mesaGerada.Flop()).Message;
             Assert.Equal(Ressource.MesaMsgNaoPermitidoIniciarFlopSemApostasMinimas, mensagemDeErro);
+        }
+
+        [Fact]
+        public void NaoDeveExecutarFlopAntesDoPreFlop()
+        {
+            var mesaGerada = MesaBuilder.Novo().JogadoresPorMesa(_quantidadeMinimaDeJogadoresPermitidos).DeveIniciarPartida().ObterPrimeiraMesa();
+
+            var mensagemDeErro = Assert.Throws<Exception>(() => mesaGerada.Flop()).Message;
+            Assert.Equal(Ressource.MesaMsgFlopDeveSerExecutadoAposPreFlop, mensagemDeErro);
+        }
+
+        [Fact]
+        public void NaoDevePermitirQueOFlopSejaExecutadoMaisDeUmaVezNaRodada()
+        {
+            var mesaGerada = MesaBuilder.Novo().JogadoresPorMesa(_quantidadeMinimaDeJogadoresPermitidos).DeveIniciarPartida().DeveIniciarMao().DeveExecutarFlop().RealizarApostasAposPreFlop().ObterPrimeiraMesa();
+
+            var mensagemDeErro = Assert.Throws<Exception>(() => mesaGerada.Flop()).Message;
+            Assert.Equal(Ressource.MesaMsgFlopNaoDeveSerExecutadoMaisDeUmaVez, mensagemDeErro);
+        }
+
+        [Theory(DisplayName = "NaoDeveIniciarFlopCasoAlgumaJogadaIndevidaJaTenhaSidoAcionada")]
+        [InlineData("turn")]
+        [InlineData("river")]
+        public void NaoDeveIniciarFlopCasoAlgumaJogadaIndevidaJaTenhaSidoAcionada(string jogada)
+        {
+            var mesaGerada = MesaBuilder.Novo().JogadoresPorMesa(_quantidadeMinimaDeJogadoresPermitidos).DeveIniciarPartida().DeveIniciarMao().AlterarStatusJogadaMesa(jogada, true).ObterPrimeiraMesa();
+
+            var mensagemDeErro = Assert.Throws<Exception>(() => mesaGerada.Flop()).Message;
+            Assert.Equal(Ressource.MesaMsgFlopDeveSerExecutadoAntesDoTurnERiver, mensagemDeErro);
         }
 
         [Fact]
@@ -611,7 +652,7 @@ namespace Poker.TexasHoldem.Test
         public bool FlopExecutado { get; private set; }
         public bool TurnExecutado { get; set; }
         public bool RiverExecutado { get; set; }
-        
+
 
         private readonly int _quantidadeMinimaDeJogadoresPermitidos = 2;
         private readonly int _quantidadeMaximaDeJogadoresPermitidos = 9;
@@ -687,7 +728,7 @@ namespace Poker.TexasHoldem.Test
         /// </summary>
         public string IniciarMao()
         {
-            if (!PreFlopExecutado && !FlopExecutado && !TurnExecutado && !RiverExecutado)
+            if (PreFlopExecutado || FlopExecutado || TurnExecutado || RiverExecutado)
                 throw new Exception(Ressource.MesaMsgPreFlopExecutadoAposOutraJogadaDeMesa);
 
             if (JogadoresAtivos.Count() < _quantidadeMinimaDeJogadoresPermitidos)
@@ -729,6 +770,7 @@ namespace Poker.TexasHoldem.Test
             // Posiciona o UTG como primeiro da lista
             OrdenarJogadores(IdJogadorUTG);
             JogadorAtual = null;
+            PreFlopExecutado = true;
 
             return mensagem;
         }
@@ -812,7 +854,16 @@ namespace Poker.TexasHoldem.Test
         /// <returns>Retorna true caso haja jogadores suficientes para realizar o flop. Caso contrário, false</returns>
         public bool Flop()
         {
-            return RenovarRodadaDeApostas(3);
+            if (!PreFlopExecutado)
+                throw new Exception(Ressource.MesaMsgFlopDeveSerExecutadoAposPreFlop);
+
+            if (FlopExecutado)
+                throw new Exception(Ressource.MesaMsgFlopNaoDeveSerExecutadoMaisDeUmaVez);
+
+            if (TurnExecutado || RiverExecutado)
+                throw new Exception(Ressource.MesaMsgFlopDeveSerExecutadoAntesDoTurnERiver);
+
+            return FlopExecutado = RenovarRodadaDeApostas(3);
         }
 
         /// <summary>

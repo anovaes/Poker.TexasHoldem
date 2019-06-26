@@ -11,6 +11,10 @@ namespace Poker.TexasHoldem.Test._Builder
         private int[] _quantidadeJogadoresPorMesa;
         private bool _deveIniciarPartida;
         private bool _deveIniciarMao;
+        private bool _deveExecutarFlop;
+        private bool _deveExecutarTurn;
+        private bool _deveExecutarRiver;
+        private bool _apostasPosPreFlop;
         private string _jogadaMesa;
         private bool _statusJogadaMesa;
 
@@ -63,6 +67,46 @@ namespace Poker.TexasHoldem.Test._Builder
         }
 
         /// <summary>
+        /// Indica se deve ativar método Flop
+        /// </summary>
+        /// <returns>Instância atual</returns>
+        public MesaBuilder DeveExecutarFlop()
+        {
+            _deveExecutarFlop = true;
+            return this;
+        }
+
+        /// <summary>
+        /// Indica se deve ativar método Turn
+        /// </summary>
+        /// <returns>Instância atual</returns>
+        public MesaBuilder DeveExecutarTurn()
+        {
+            _deveExecutarTurn = true;
+            return this;
+        }
+
+        /// <summary>
+        /// Indica se deve ativar método River
+        /// </summary>
+        /// <returns>Instância atual</returns>
+        public MesaBuilder DeveExecutarRiver()
+        {
+            _deveExecutarRiver = true;
+            return this;
+        }
+
+        /// <summary>
+        /// Indica se deve realizar as apostas após PreFlop
+        /// </summary>
+        /// <returns></returns>
+        public MesaBuilder RealizarApostasAposPreFlop()
+        {
+            _apostasPosPreFlop = true;
+            return this;
+        }
+
+        /// <summary>
         /// Indica qual status de jogada será alterado
         /// </summary>
         /// <param name="jogada">Jogada da mesa</param>
@@ -108,6 +152,21 @@ namespace Poker.TexasHoldem.Test._Builder
 
                 if (_deveIniciarMao)
                     mesa.IniciarMao();
+
+                if (_apostasPosPreFlop)
+                    foreach (var jogador in mesa.JogadoresAtivos)
+                    {
+                        jogador.AlterarValorFichasApostadasNaRodada(mesa.ApostaAtual);
+                    }
+
+                if (_deveExecutarFlop)
+                    mesa.Flop();
+
+                if (_deveExecutarTurn)
+                    mesa.Turn();
+
+                if (_deveExecutarRiver)
+                    mesa.River();
 
                 if (!string.IsNullOrEmpty(_jogadaMesa))
                     mesa.AlterarExecucaoDeJogadas(_jogadaMesa, _statusJogadaMesa);

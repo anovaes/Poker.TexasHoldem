@@ -127,7 +127,9 @@ namespace Poker.TexasHoldem.Lib._Base
         public static string MesaMsgNaoPermitidoApostaComValorNegativo = "Não é permitido realizar apostas com valores negativos";
         public static string MesaMsgNaoPermitidoIniciarFlopSemApostasMinimas = "Não é permitido abrir o Flop antes que todos os jogadores tenham realizado as apostas mínimas.";
         public static string MesaMsgPreFlopExecutadoAposOutraJogadaDeMesa = "A mão não pode ser iniciada, pois outra jogada de mesa foi executada antes.";
-        public static string MesaMsgFlopDeveSerExecutadoAposPreFlop = "";
+        public static string MesaMsgFlopDeveSerExecutadoAposPreFlop = "O Flop deve ser executado após o Pré Flop";
+        public static string MesaMsgFlopNaoDeveSerExecutadoMaisDeUmaVez = "O Flop não deve ser executado mais de uma vez na mesma rodada";
+        public static string MesaMsgFlopDeveSerExecutadoAntesDoTurnERiver = "O Flop deve ser executado antes do Turn e River";
         #endregion
 
         #region Mensagem de Sucesso Mesa

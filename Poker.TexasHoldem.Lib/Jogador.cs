@@ -123,5 +123,14 @@ namespace Poker.TexasHoldem.Lib
             TrocarStatus(StatusJogador.Fold);
             FichasApostadasNaMao = FichasApostadasNaRodada = 0;
         }
+
+        /// <summary>
+        /// Método utilizado apenas em classe de teste para realizar a alteração do valor das fichas apostas na rodada
+        /// </summary>
+        /// <param name="fichas">Quantidade de fichas</param>
+        internal void AlterarValorFichasApostadasNaRodada(int fichas)
+        {
+            FichasApostadasNaRodada = fichas;
+        }
     }
 }
