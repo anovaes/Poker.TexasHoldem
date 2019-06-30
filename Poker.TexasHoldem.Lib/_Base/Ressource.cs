@@ -125,11 +125,16 @@ namespace Poker.TexasHoldem.Lib._Base
         public static string MesaMsgNaoPermitidoIniciarPartidaSemQuantidadeMinimaDeJogadores = "É necessário pelo menos dois jogadores para iniciar a partida.";
         public static string MesaMsgNaoPermitidoIniciarRodadaSemQuantidadeMinimaDeJogadores = "É necessário pelo menos dois jogadores para iniciar a rodada.";
         public static string MesaMsgNaoPermitidoApostaComValorNegativo = "Não é permitido realizar apostas com valores negativos";
-        public static string MesaMsgNaoPermitidoIniciarFlopSemApostasMinimas = "Não é permitido abrir o Flop antes que todos os jogadores tenham realizado as apostas mínimas.";
+        public static string MesaMsgNaoPermitidoIniciarNovaRodadaSemApostasMinimas = "Não é permitido abrir nova rodada de apostas antes que todos os jogadores tenham realizado as apostas mínimas.";
         public static string MesaMsgPreFlopExecutadoAposOutraJogadaDeMesa = "A mão não pode ser iniciada, pois outra jogada de mesa foi executada antes.";
         public static string MesaMsgFlopDeveSerExecutadoAposPreFlop = "O Flop deve ser executado após o Pré Flop";
         public static string MesaMsgFlopNaoDeveSerExecutadoMaisDeUmaVez = "O Flop não deve ser executado mais de uma vez na mesma rodada";
         public static string MesaMsgFlopDeveSerExecutadoAntesDoTurnERiver = "O Flop deve ser executado antes do Turn e River";
+        public static string MesaMsgTurnDeveSerExecutadoAposPreFlopEFlop = "O Turn deve ser executado após o Pré Flop e Flop";
+        public static string MesaMsgTurnNaoDeveSerExecutadoMaisDeUmaVez = "O Turn não deve ser executado mais de uma vez na mesma rodada";
+        public static string MesaMsgTurnDeveSerExecutadoAntesDoRiver = "O Turn deve ser executado antes do River";
+        public static string MesaMsgRiverDeveSerExecutadoAposDemaisRodadas = "O River deve ser executado após o Pré Flop, Flop e Turn";
+        public static string MesaMsgRiverNaoDeveSerExecutadoMaisDeUmaVez = "O River não deve ser executado mais de uma vez na mesma rodada";
         #endregion
 
         #region Mensagem de Sucesso Mesa
