@@ -108,6 +108,10 @@ namespace Poker.TexasHoldem.Lib._Base
         public static string JogadorMsgValorFichasGanhasInvalido = "Não é permitido receber quantidade de fichas negativas";
         #endregion
 
+        #region Mensagem de Erro Pote
+        public static string PoteJogadoresNaoInformados = "Não foi informado os jogadores vinculados ao Pote";
+        #endregion
+
         #region Mesa
         public static int MesaValorInicialBlind = 2;
         public static string MesaAcaoBlind = "Jogador #0# pagou #1# blind de #2# fichas";

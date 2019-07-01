@@ -10,7 +10,7 @@ namespace Poker.TexasHoldem.Lib
     public class Mesa
     {
         public int Id { get; private set; }
-        public int Pote { get; private set; }
+        public int Pote { get; private set; } //Criar classe PoteGeral que irá controlar o pote de fichas da mesa
         public List<Jogador> Jogadores { get; private set; }
         public List<Jogador> JogadoresAtivos
         {
@@ -212,7 +212,9 @@ namespace Poker.TexasHoldem.Lib
             else
             {
                 if (!string.IsNullOrEmpty(blind))
+                {
                     mensagem = Mensagem.Gerar(Ressource.MesaAcaoBlind, JogadorAtual.Nome, blind, fichas.ToString());
+                }
                 else if (aposta > ApostaAtual)
                 {
                     ApostaAtual = aposta;
@@ -301,7 +303,7 @@ namespace Poker.TexasHoldem.Lib
             //Queimar Carta
             Baralho.DistribuirCarta();
 
-            //Montar Flop
+            //Adicionar cartas na mesa
             for (int i = 0; i < quantidadeCartasComunitarias; i++)
             {
                 Cartas.Add(Baralho.DistribuirCarta());
