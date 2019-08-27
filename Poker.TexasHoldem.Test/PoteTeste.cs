@@ -4,6 +4,7 @@ using ExpectedObjects;
 using System.Collections.Generic;
 using Poker.TexasHoldem.Lib._Base;
 using System.Linq;
+using Poker.TexasHoldem.Lib;
 
 namespace Poker.TexasHoldem.Test
 {
@@ -12,15 +13,24 @@ namespace Poker.TexasHoldem.Test
         [Fact]
         public void DeveCriarPote()
         {
-            var idsJogadores = new List<int> { 1, 2, 3 };
+            var jogadores = new List<Jogador> {
+                new Jogador(1, "teste"),
+                new Jogador(2, "novo"),
+                new Jogador(3, "foo")
+            };
+
+            jogadores[0].Apostar(100);
+            jogadores[1].Apostar(100);
+            jogadores[2].Apostar(100);
+
             var poteEsperado = new
             {
-                Fichas = 0,
-                IdsJogadores = idsJogadores,
+                Id = 1,
+                Fichas = 300,
                 Ativo = true
             };
 
-            var poteGerado = new Pote(idsJogadores);
+            var poteGerado = new Pote(1, jogadores);
 
             poteEsperado.ToExpectedObject().ShouldMatch(poteGerado);
         }
@@ -28,38 +38,61 @@ namespace Poker.TexasHoldem.Test
         [Fact]
         public void NaoDeveCriarPoteQuandoAListaDeIdsForNula()
         {
-            List<int> idsJogadores = null;
+            List<Jogador> jogadores = null;
 
-            var mensagemDeErro = Assert.Throws<Exception>(() => new Pote(idsJogadores)).Message;
+            var mensagemDeErro = Assert.Throws<Exception>(() => new Pote(1, jogadores)).Message;
             Assert.Equal(Ressource.PoteJogadoresNaoInformados, mensagemDeErro);
         }
 
         [Fact]
         public void NaoDeveCriarPoteQuandoAListaNaoConterIds()
         {
-            List<int> idsJogadores = new List<int>();
+            List<Jogador> jogadores = new List<Jogador>();
 
-            var mensagemDeErro = Assert.Throws<Exception>(() => new Pote(idsJogadores)).Message;
+            var mensagemDeErro = Assert.Throws<Exception>(() => new Pote(1, jogadores)).Message;
             Assert.Equal(Ressource.PoteJogadoresNaoInformados, mensagemDeErro);
         }
 
         public class Pote
         {
+            private List<JogadorFicha> _jogadores;
+
+            public int Id { get; private set; }
             public int Fichas { get; private set; }
-            public List<int> IdsJogadores { get; private set; }
             public bool Ativo { get; private set; }
 
             /// <summary>
             /// Inicia a instância do Pote
             /// </summary>
-            /// <param name="idsJogadores">Lista de id dos jogadores vinculados ao pote</param>
-            public Pote(List<int> idsJogadores)
+            /// <param name="id">Identificador do Pote</param>
+            /// <param name="jogadores">Lista de jogadores vinculados ao pote</param>
+            public Pote(int id, List<Jogador> jogadores)
             {
-                if (idsJogadores == null || !idsJogadores.Any())
+                if (jogadores == null || !jogadores.Any())
                     throw new Exception(Ressource.PoteJogadoresNaoInformados);
 
-                IdsJogadores = idsJogadores;
+                _jogadores = new List<JogadorFicha>();
+
+                foreach (var jogador in jogadores)
+                {
+                    _jogadores.Add(new JogadorFicha(jogador.Id, jogador.FichasApostadasNaRodada));
+                }
+
+                Id = id;
+                Fichas = _jogadores.Sum(j => j.Fichas);
                 Ativo = true;
+            }
+
+            internal class JogadorFicha
+            {
+                public int IdJogador { get; private set; }
+                public int Fichas { get; private set; }
+
+                public JogadorFicha(int idJogador, int fichas)
+                {
+                    IdJogador = idJogador;
+                    Fichas = fichas;
+                }
             }
         }
     }
