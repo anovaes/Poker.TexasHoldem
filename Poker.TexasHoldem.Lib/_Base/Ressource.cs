@@ -144,5 +144,10 @@ namespace Poker.TexasHoldem.Lib._Base
         #region Mensagem de Sucesso Mesa
         public static string MesaMsgJogadorIncluidoComSucesso = "Jogador #0# sentou-se a mesa #1#";
         #endregion
+
+        #region Mensagem de Erro JogadorFicha
+        public static string JogadorFichaIdInvalido = "Não é permitido id de jogador menor ou igual a zero.";
+        public static string JogadorFichaFichasInvalidas = "Não é permitido quantidade de fichas menor ou igual a zero.";
+        #endregion
     }
 }

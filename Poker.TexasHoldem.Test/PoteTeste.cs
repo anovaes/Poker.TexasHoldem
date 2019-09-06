@@ -82,18 +82,6 @@ namespace Poker.TexasHoldem.Test
                 Fichas = _jogadores.Sum(j => j.Fichas);
                 Ativo = true;
             }
-
-            internal class JogadorFicha
-            {
-                public int IdJogador { get; private set; }
-                public int Fichas { get; private set; }
-
-                public JogadorFicha(int idJogador, int fichas)
-                {
-                    IdJogador = idJogador;
-                    Fichas = fichas;
-                }
-            }
         }
     }
 }
