@@ -135,11 +135,12 @@ namespace Poker.TexasHoldem.Test._Builder
 
                 Mesa mesa = new Mesa(idMesa);
 
-                for (int i = 1; i <= quantidade; i++)
-                {
-                    Jogador jogador = new Jogador(i, $"jogador{i}");
-                    mesa.Jogadores.Add(jogador);
-                }
+                //for (int i = 1; i <= quantidade; i++)
+                //{
+                //    Jogador jogador = new Jogador(i, $"jogador{i}");
+                //    mesa.Jogadores.Add(jogador);
+                //}
+                new JogadorBuilder().Novo().CriarJogadores(quantidade).ObterJogadores().ForEach(j => mesa.Jogadores.Add(j));
                 mesas.Add(mesa);
 
                 idMesa++;
