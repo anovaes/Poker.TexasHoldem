@@ -23,7 +23,7 @@ namespace Poker.TexasHoldem.Test
             {
                 Id = 1,
                 Fichas = 350,
-                Ativo = true
+                Aberto = true
             };
 
             var poteGerado = new Pote(1, jogadoresFichas);
@@ -49,17 +49,36 @@ namespace Poker.TexasHoldem.Test
             Assert.Equal(Ressource.PoteJogadoresNaoInformados, mensagemDeErro);
         }
 
+        [Fact]
+        public void DeveFecharPote()
+        {
+            var jogadoresFichas = new List<FichasJogador> {
+                new FichasJogador(1, 100),
+                new FichasJogador(2, 100),
+                new FichasJogador(3, 150)
+            };
+
+            var poteGerado = new Pote(1, jogadoresFichas);
+
+            Assert.True(poteGerado.Aberto);
+
+            poteGerado.Fechar();
+
+            Assert.False(poteGerado.Aberto);
+        }
+
         public class Pote
         {
             private List<FichasJogador> _fichasJogadores;
 
             public int Id { get; private set; }
-            public int Fichas { get
+            public int Fichas {
+                get
                 {
                     return _fichasJogadores.Sum(fj => fj.Fichas);
                 }
             }
-            public bool Ativo { get; private set; }
+            public bool Aberto { get; private set; }
 
             /// <summary>
             /// Inicia a instância do Pote
@@ -74,7 +93,12 @@ namespace Poker.TexasHoldem.Test
                 _fichasJogadores = fichasJogadores;
 
                 Id = id;
-                Ativo = true;
+                Aberto = true;
+            }
+
+            public void Fechar()
+            {
+                Aberto = false;
             }
         }
     }
