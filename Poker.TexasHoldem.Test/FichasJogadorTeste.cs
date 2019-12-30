@@ -41,5 +41,19 @@ namespace Poker.TexasHoldem.Test
             var mensagem = Assert.Throws<Exception>(() => new FichasJogador(1, quantidadeDeFichasInvalida)).Message;
             Assert.Equal(Ressource.JogadorFichaFichasInvalidas, mensagem);
         }
+
+        [Fact]
+        public void DeveAdicionarFichas()
+        {
+            var idJogador = 1;
+            var fichasIniciais = 100;
+            var fichasAdicionadas = 250;
+            var fichasEsperadas = fichasIniciais + fichasAdicionadas;
+            var objFichasJogador = new FichasJogador(idJogador, fichasIniciais);
+
+            objFichasJogador.AdicionarFichas(fichasAdicionadas);
+
+            Assert.Equal(fichasEsperadas, objFichasJogador.Fichas);
+        }
     }
 }

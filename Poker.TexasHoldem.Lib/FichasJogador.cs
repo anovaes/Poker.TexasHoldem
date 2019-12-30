@@ -24,5 +24,14 @@ namespace Poker.TexasHoldem.Lib
             IdJogador = idJogador;
             Fichas = fichas;
         }
+
+        /// <summary>
+        /// Adiciona ao montande as novas fichas
+        /// </summary>
+        /// <param name="fichasAdicionadas">fichas apostadas</param>
+        internal void AdicionarFichas(int fichas)
+        {
+            Fichas += fichas;
+        }
     }
 }

@@ -63,5 +63,52 @@ namespace Poker.TexasHoldem.Test
             poteGerado.Fechar();
             Assert.False(poteGerado.Aberto);
         }
+
+        [Fact]
+        public void DeveInformarQuantidadeDeFichasDoJogador()
+        {
+            var idJogadorPesquisado = 2;
+            var fichasEsperadas = 150;
+
+            var jogadoresFichas = new List<FichasJogador> {
+                new FichasJogador(1, 100),
+                new FichasJogador(idJogadorPesquisado, fichasEsperadas),
+                new FichasJogador(3, 200)
+            };
+            var poteGerado = new Pote(1, jogadoresFichas);
+
+            var fichasPesquisada = poteGerado.PesquisarFichasDoJogador(idJogadorPesquisado);
+
+            Assert.Equal(fichasEsperadas, fichasPesquisada);
+        }
+
+        [Fact]
+        public void DeveReceberFichasDoJogadorQueNaoEstaNoPote()
+        {
+            var idJogador = 1;
+            var fichasApostadas = 100;
+            var poteGerado = new Pote(1);
+
+            poteGerado.AdicionarFichas(idJogador, fichasApostadas);
+
+            Assert.Equal(fichasApostadas, poteGerado.PesquisarFichasDoJogador(idJogador));
+        }
+
+        [Fact]
+        public void DeveReceberFichasDoJogadorQueJaEstaNoPote()
+        {
+            var idJogador = 1;
+            var fichasPrimeiraAposta = 100;
+            var fichasSegundaAposta = 150;
+            var fichasEsperadas = 250;
+            var jogadoresFichas = new List<FichasJogador> {
+                new FichasJogador(idJogador, fichasPrimeiraAposta)
+            };
+            var poteGerado = new Pote(1, jogadoresFichas);
+
+            poteGerado.AdicionarFichas(idJogador, fichasSegundaAposta);
+
+            Assert.Equal(fichasEsperadas, poteGerado.PesquisarFichasDoJogador(idJogador));
+        }
     }
 }
