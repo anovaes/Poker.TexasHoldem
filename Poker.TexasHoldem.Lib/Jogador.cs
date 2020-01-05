@@ -74,7 +74,8 @@ namespace Poker.TexasHoldem.Lib
                 Fichas -= fichasAposta;
             }
 
-            FichasApostadasNaRodada = FichasApostadasNaMao += fichasAposta;
+            FichasApostadasNaRodada += fichasAposta;
+            FichasApostadasNaMao += fichasAposta;
             return fichasAposta;
         }
 

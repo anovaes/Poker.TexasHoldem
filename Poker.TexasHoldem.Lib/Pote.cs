@@ -25,6 +25,14 @@ namespace Poker.TexasHoldem.Lib
             _fichasJogadores = new List<FichasJogador>();
         }
 
+        public List<int> JogadoresNoPote
+        {
+            get
+            {
+                return _fichasJogadores.OrderBy(fj => fj.IdJogador).Select(fj => fj.IdJogador).ToList();
+            }
+        }
+
         /// <summary>
         /// Inicia a instância do Pote
         /// </summary>

@@ -18,7 +18,7 @@ namespace Poker.TexasHoldem.Lib
             if (idJogador <= 0)
                 throw new Exception(Ressource.JogadorFichaIdInvalido);
 
-            if (fichas <= 0)
+            if (fichas < 0)
                 throw new Exception(Ressource.JogadorFichaFichasInvalidas);
 
             IdJogador = idJogador;

@@ -34,7 +34,7 @@ namespace Poker.TexasHoldem.Test
         }
 
         [Theory(DisplayName = "NaoDeveGerarJogadorFichaQuandoIdForMenorOuIgualAZero")]
-        [InlineData(0)]
+        [InlineData(-10)]
         [InlineData(-1)]
         public void NaoDeveGerarJogadorFichaQuandoQuantidadeDeFichasForMenorOuIgualAZero(int quantidadeDeFichasInvalida)
         {
