@@ -133,5 +133,15 @@ namespace Poker.TexasHoldem.Lib
         {
             FichasApostadasNaRodada = fichas;
         }
+
+        internal void AtribuirPontuacao(int pontuacao)
+        {
+            Mao = new Mao(pontuacao);
+        }
+
+        internal void AtribuirFichas(int fichas)
+        {
+            Fichas = fichas;
+        }
     }
 }

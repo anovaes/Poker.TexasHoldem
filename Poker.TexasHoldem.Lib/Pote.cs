@@ -23,6 +23,7 @@ namespace Poker.TexasHoldem.Lib
         {
             Id = id;
             _fichasJogadores = new List<FichasJogador>();
+            Aberto = true;
         }
 
         public List<int> JogadoresNoPote
@@ -64,6 +65,11 @@ namespace Poker.TexasHoldem.Lib
             return _fichasJogadores.Where(fj => fj.IdJogador == idJogador).FirstOrDefault().Fichas;
         }
 
+        /// <summary>
+        /// Adiciona fichas ao pote de um determinado jogador
+        /// </summary>
+        /// <param name="idJogador">Id do jogador</param>
+        /// <param name="fichas">Quantidade de fichas do jogador</param>
         internal void AdicionarFichas(int idJogador, int fichas)
         {
             var fichasJogador = _fichasJogadores.Where(fj => fj.IdJogador == idJogador).FirstOrDefault();
@@ -72,6 +78,11 @@ namespace Poker.TexasHoldem.Lib
                 _fichasJogadores.Add(new FichasJogador(idJogador, fichas));
             else
                 fichasJogador.AdicionarFichas(fichas);
+        }
+
+        internal int RetirarFichasDoPote(decimal porcentagem)
+        {
+            return 0;
         }
     }
 }

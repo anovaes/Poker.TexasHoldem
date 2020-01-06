@@ -1,4 +1,6 @@
-﻿using Poker.TexasHoldem.Lib;
+﻿using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Resources;
+using Poker.TexasHoldem.Lib;
+using Poker.TexasHoldem.Lib._Base;
 using Poker.TexasHoldem.Lib._Enum;
 using System;
 using System.Collections.Generic;
@@ -11,6 +13,8 @@ namespace Poker.TexasHoldem.Test._Builder
         private int _quantidadeJogadores;
         private int[] _apostas;
         private StatusJogador[] _statusJogadores;
+        private int[] _pontuacoes;
+        private int[] _montantesDeFichas;
 
         /// <summary>
         /// Deve criar instância da JogadorBuilder. (Exclusivo para uso de testes unitários)
@@ -56,13 +60,39 @@ namespace Poker.TexasHoldem.Test._Builder
         /// <summary>
         /// Informa os status dos jogadores através de um array de status. Cada item do array significa o status de cada jogador.
         /// Caso seja informado mais status do que a quantidade de jogadores, os status excedentes serão ignorados.
-        /// Caso seja informado menos apostas do que a quantidade de jogadores, os jogadores com status faltando ficarão com status Ativo.
+        /// Caso seja informado menos status do que a quantidade de jogadores, os jogadores com status faltando ficarão com status Ativo.
         /// </summary>
         /// <param name="statusJogadores"></param>
         /// <returns></returns>
         public JogadorBuilder IndicarStatus(StatusJogador[] statusJogadores)
         {
             _statusJogadores = statusJogadores;
+            return this;
+        }
+
+        /// <summary>
+        /// Informa a pontuação dos jogadores através de um array de pontuacoes. Cada item do array significa a pontuação de cada jogador.
+        /// Caso seja informado mais pontuações do que a quantidade de jogadores, as pontuações excedentes serão ignoradas.
+        /// Caso seja informado menos pontuações do que a quantidade de jogadores, os jogadores com pontuações faltando ficarão com pontuação zerada.
+        /// </summary>
+        /// <param name="statusJogadores"></param>
+        /// <returns></returns>
+        public JogadorBuilder AdicionarPontuacoes(int[] pontuacoes)
+        {
+            _pontuacoes = pontuacoes;
+            return this;
+        }
+
+        /// <summary>
+        /// Informa as fichas dos jogadores através de um array de fichas. Cada item do array significa as fichas de cada jogador.
+        /// Caso seja informado mais montantes de fichas do que a quantidade de jogadores, os montantes excedentes serão ignoradas.
+        /// Caso seja informado menos montantes de fichas do que a quantidade de jogadores, os jogadores com montantes de fichas faltando ficarão com as fichas default.
+        /// </summary>
+        /// <param name="statusJogadores"></param>
+        /// <returns></returns>
+        public JogadorBuilder AdicionarFichas(int[] montantesDeFichas)
+        {
+            _montantesDeFichas = montantesDeFichas;
             return this;
         }
 
@@ -80,9 +110,15 @@ namespace Poker.TexasHoldem.Test._Builder
                 var jogador = new Jogador(id, $"jogador{id}");
                 var apostaAtual = _apostas?.Length > i ? _apostas[i] : 0;
                 var statusAtual = _statusJogadores?.Length > i ? _statusJogadores[i] : StatusJogador.Ativo;
+                var pontuacaoAtual = _pontuacoes?.Length > i ? _pontuacoes[i] : 0;
+                var fichas = _montantesDeFichas?.Length > i ? _montantesDeFichas[i] : Ressource.JogadorFichasInicial;
 
                 jogador.AlterarValorFichasApostadasNaRodada(apostaAtual);
                 jogador.TrocarStatus(statusAtual);
+                jogador.AtribuirFichas(fichas);
+
+                if (_pontuacoes != null)
+                    jogador.AtribuirPontuacao(pontuacaoAtual);
 
                 jogadores.Add(jogador);
             }

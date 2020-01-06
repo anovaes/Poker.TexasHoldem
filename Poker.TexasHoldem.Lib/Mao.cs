@@ -52,6 +52,15 @@ namespace Poker.TexasHoldem.Lib
         }
 
         /// <summary>
+        /// Inicia uma instância da classe Mão. Para uso apenas em testes.
+        /// </summary>
+        /// <param name="pontuacao">Recebe pontuacao</param>
+        internal Mao(int pontuacao)
+        {
+            Pontuacao = pontuacao;
+        }
+
+        /// <summary>
         /// Classifica e gera pontuação a jogada com base nas cartas do jogador e as cartas da mesa
         /// </summary>
         /// <param name="cartasMesa">Cartas da mesa. É esperado receber uma lista contendo cinco cartas</param>
@@ -81,6 +90,15 @@ namespace Poker.TexasHoldem.Lib
                 if (verificar())
                     break;
             }
+        }
+
+        /// <summary>
+        /// Uso apenas em testes. Atribui uma pontuação a mão
+        /// </summary>
+        /// <param name="pontuacao"></param>
+        internal void AtribuirPontuacao(int pontuacao)
+        {
+            Pontuacao = pontuacao;
         }
 
         /// <summary>
