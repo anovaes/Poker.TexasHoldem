@@ -4,6 +4,7 @@ using ExpectedObjects;
 using System.Collections.Generic;
 using Poker.TexasHoldem.Lib._Base;
 using Poker.TexasHoldem.Lib;
+using System.Linq;
 
 namespace Poker.TexasHoldem.Test
 {
@@ -12,52 +13,23 @@ namespace Poker.TexasHoldem.Test
         [Fact]
         public void DeveCriarPote()
         {
-            var jogadoresFichas = new List<FichasJogador> {
-                new FichasJogador(1, 100),
-                new FichasJogador(2, 100),
-                new FichasJogador(3, 150)
-            };
-
             var poteEsperado = new
             {
                 Id = 1,
-                Fichas = 350,
+                Fichas = 0,
+                FichasMinimaDoPote = 0,
                 Aberto = true
             };
 
-            var poteGerado = new Pote(1, jogadoresFichas);
+            var poteGerado = new Pote(1);
 
             poteEsperado.ToExpectedObject().ShouldMatch(poteGerado);
         }
 
         [Fact]
-        public void NaoDeveCriarPoteQuandoAListaDeIdsForNula()
-        {
-            List<FichasJogador> fichasJogadores = null;
-
-            var mensagemDeErro = Assert.Throws<Exception>(() => new Pote(1, fichasJogadores)).Message;
-            Assert.Equal(Ressource.PoteJogadoresNaoInformados, mensagemDeErro);
-        }
-
-        [Fact]
-        public void NaoDeveCriarPoteQuandoAListaNaoConterIds()
-        {
-            List<FichasJogador> fichasJogadores = new List<FichasJogador>();
-
-            var mensagemDeErro = Assert.Throws<Exception>(() => new Pote(1, fichasJogadores)).Message;
-            Assert.Equal(Ressource.PoteJogadoresNaoInformados, mensagemDeErro);
-        }
-
-        [Fact]
         public void DeveFecharPote()
         {
-            var jogadoresFichas = new List<FichasJogador> {
-                new FichasJogador(1, 100),
-                new FichasJogador(2, 100),
-                new FichasJogador(3, 150)
-            };
-
-            var poteGerado = new Pote(1, jogadoresFichas);
+            var poteGerado = new Pote(1);
             Assert.True(poteGerado.Aberto);
 
             poteGerado.Fechar();
@@ -65,33 +37,17 @@ namespace Poker.TexasHoldem.Test
         }
 
         [Fact]
-        public void DeveInformarQuantidadeDeFichasDoJogador()
-        {
-            var idJogadorPesquisado = 2;
-            var fichasEsperadas = 150;
-
-            var jogadoresFichas = new List<FichasJogador> {
-                new FichasJogador(1, 100),
-                new FichasJogador(idJogadorPesquisado, fichasEsperadas),
-                new FichasJogador(3, 200)
-            };
-            var poteGerado = new Pote(1, jogadoresFichas);
-
-            var fichasPesquisada = poteGerado.PesquisarFichasDoJogador(idJogadorPesquisado);
-
-            Assert.Equal(fichasEsperadas, fichasPesquisada);
-        }
-
-        [Fact]
         public void DeveReceberFichasDoJogadorQueNaoEstaNoPote()
         {
             var idJogador = 1;
-            var fichasApostadas = 100;
+            var fichasEsperadas = 100;
             var poteGerado = new Pote(1);
 
-            poteGerado.AdicionarFichas(idJogador, fichasApostadas);
+            poteGerado.AdicionarFichas(idJogador, fichasEsperadas);
 
-            Assert.Equal(fichasApostadas, poteGerado.PesquisarFichasDoJogador(idJogador));
+            Assert.Equal(fichasEsperadas, poteGerado.Fichas);
+            Assert.Equal(fichasEsperadas, poteGerado.FichasMinimaDoPote);
+            Assert.Contains(poteGerado.JogadoresNoPote, j => j == idJogador);
         }
 
         [Fact]
@@ -100,15 +56,15 @@ namespace Poker.TexasHoldem.Test
             var idJogador = 1;
             var fichasPrimeiraAposta = 100;
             var fichasSegundaAposta = 150;
-            var fichasEsperadas = 250;
-            var jogadoresFichas = new List<FichasJogador> {
-                new FichasJogador(idJogador, fichasPrimeiraAposta)
-            };
-            var poteGerado = new Pote(1, jogadoresFichas);
+            var fichasEsperadas = fichasPrimeiraAposta + fichasSegundaAposta;
+            var poteGerado = new Pote(1);
+            poteGerado.AdicionarFichas(idJogador, fichasPrimeiraAposta);
 
             poteGerado.AdicionarFichas(idJogador, fichasSegundaAposta);
 
-            Assert.Equal(fichasEsperadas, poteGerado.PesquisarFichasDoJogador(idJogador));
+            Assert.Equal(fichasEsperadas, poteGerado.Fichas);
+            Assert.Equal(fichasSegundaAposta, poteGerado.FichasMinimaDoPote);
+            Assert.Contains(poteGerado.JogadoresNoPote, j => j == idJogador);
         }
     }
 }

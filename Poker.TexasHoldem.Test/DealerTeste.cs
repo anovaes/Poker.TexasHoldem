@@ -85,7 +85,7 @@ namespace Poker.TexasHoldem.Test
 
                 for (int j = 0; j < idJogadoresEmCadaPote[i].Count(); j++)
                 {
-                    Assert.Equal(idJogadoresEmCadaPote[i][j], dealer.Potes[i].JogadoresNoPote[j]);
+                    Assert.Equal(idJogadoresEmCadaPote[i][j], dealer.Potes[i].JogadoresNoPote.OrderBy(p => p).ToList()[j]);
                 }
             }
 
@@ -132,7 +132,7 @@ namespace Poker.TexasHoldem.Test
 
                 for (int j = 0; j < idJogadoresEmCadaPote[i].Count(); j++)
                 {
-                    Assert.Equal(idJogadoresEmCadaPote[i][j], dealer.Potes[i].JogadoresNoPote[j]);
+                    Assert.Equal(idJogadoresEmCadaPote[i][j], dealer.Potes[i].JogadoresNoPote.OrderBy(p => p).ToList()[j]);
                 }
             }
 
@@ -177,7 +177,7 @@ namespace Poker.TexasHoldem.Test
 
                 for (int j = 0; j < idJogadoresEmCadaPote[i].Count(); j++)
                 {
-                    Assert.Equal(idJogadoresEmCadaPote[i][j], dealer.Potes[i].JogadoresNoPote[j]);
+                    Assert.Equal(idJogadoresEmCadaPote[i][j], dealer.Potes[i].JogadoresNoPote.OrderBy(p => p).ToList()[j]);
                 }
             }
 
@@ -252,8 +252,14 @@ namespace Poker.TexasHoldem.Test
         {
             var dealer = new Dealer();
             var montanteFinalDeCadaJogador = new int[] { 200, 50, 50, 400 };
-            var jogadores = new JogadorBuilder().Novo().CriarJogadores(4).AdicionarApostas(new int[] { 150, 150, 150, 100 }).AdicionarPontuacoes(new int[] { 3, 2, 1, 4 }).AdicionarFichas(new int[] { 200, 200, 200, 100}).ObterJogadores();
-            dealer.FinalizarRodada(jogadores.Where(j => j.Status == StatusJogador.Ativo).ToList());
+            var jogadores = new JogadorBuilder().Novo()
+                .CriarJogadores(4)
+                .AdicionarFichas(new int[] { 200, 200, 200, 100 })
+                .AdicionarPontuacoes(new int[] { 3, 2, 1, 4 })
+                .AdicionarApostas(new int[] { 150, 150, 150, 100 })
+                .ObterJogadores();
+
+            dealer.FinalizarRodada(jogadores.Where(s => s.Status != StatusJogador.Eliminado && s.Status != StatusJogador.Fold).ToList());
             jogadores[0].Apostar(0);
             jogadores[1].Apostar(0);
             jogadores[2].Apostar(0);
@@ -325,14 +331,20 @@ namespace Poker.TexasHoldem.Test
                 {
                     Pontuacao = g.Key,
                     Porcentagem = 1 / g.Count()
-                });
+                })
+                .ToList();
 
             foreach (var jogador in jogadores)
             {
-                foreach (var pote in Potes)
-                {
+                var fichasGanhas = 0;
 
+                foreach (var pote in Potes.Where(p=> p.JogadoresNoPote.Any(j=> j == jogador.Id)))
+                {
+                    var porcentagem = porcentagemDoPotePorPontuacao.Where(p => p.Pontuacao == jogador.Mao.Pontuacao).First().Porcentagem;
+                    fichasGanhas += pote.RetirarFichasDoPote(porcentagem);
                 }
+
+                jogador.EncerrarMao(fichasGanhas);
             }
         }
     }

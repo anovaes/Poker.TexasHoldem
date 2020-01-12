@@ -170,7 +170,7 @@ namespace Poker.TexasHoldem.Test
             var fichasGanhas = 500;
             var fichasTotalEsperadaComJogador = 1500;
 
-            _jogadorDefault.EncerrarRodada(fichasGanhas);
+            _jogadorDefault.EncerrarMao(fichasGanhas);
 
             Assert.Equal(fichasTotalEsperadaComJogador, _jogadorDefault.Fichas);
         }
@@ -183,7 +183,7 @@ namespace Poker.TexasHoldem.Test
 
             _jogadorDefault.ReceberCarta(cartaBuilder.CartasJogador[0]);
             _jogadorDefault.ReceberCarta(cartaBuilder.CartasJogador[1]);
-            _jogadorDefault.EncerrarRodada(fichasGanhas);
+            _jogadorDefault.EncerrarMao(fichasGanhas);
 
             Assert.Null(_jogadorDefault.Mao);
         }
@@ -196,7 +196,7 @@ namespace Poker.TexasHoldem.Test
             var statusEsperado = StatusJogador.Eliminado;
 
             _jogadorDefault.Apostar(fichasApostadas);
-            _jogadorDefault.EncerrarRodada(fichasGanhas);
+            _jogadorDefault.EncerrarMao(fichasGanhas);
 
             Assert.Equal(statusEsperado, _jogadorDefault.Status);
         }
@@ -209,7 +209,7 @@ namespace Poker.TexasHoldem.Test
             var statusEsperado = StatusJogador.Ativo;
 
             _jogadorDefault.Apostar(fichasApostadas);
-            _jogadorDefault.EncerrarRodada(fichasGanhas);
+            _jogadorDefault.EncerrarMao(fichasGanhas);
 
             Assert.Equal(statusEsperado, _jogadorDefault.Status);
         }
@@ -222,7 +222,7 @@ namespace Poker.TexasHoldem.Test
 
             _jogadorDefault.Apostar(fichasApostadas);
 
-            var MensagemDeErro = Assert.Throws<Exception>(() => _jogadorDefault.EncerrarRodada(fichasGanhas)).Message;
+            var MensagemDeErro = Assert.Throws<Exception>(() => _jogadorDefault.EncerrarMao(fichasGanhas)).Message;
             Assert.Equal(Ressource.JogadorMsgValorFichasGanhasInvalido, MensagemDeErro);
         }
 
@@ -256,7 +256,7 @@ namespace Poker.TexasHoldem.Test
             var montanteFichasApostadasEsperado = 0;
 
             _jogadorDefault.Apostar(fichasApostadas);
-            _jogadorDefault.EncerrarRodada(fichasGanhas);
+            _jogadorDefault.EncerrarMao(fichasGanhas);
 
             Assert.Equal(montanteFichasApostadasEsperado, _jogadorDefault.FichasApostadasNaMao);
         }

@@ -101,7 +101,7 @@ namespace Poker.TexasHoldem.Lib
         /// Encerra a jogada e atribui as fichas ganhas ao montande do jogador.
         /// </summary>
         /// <param name="fichasGanhas">Fichas ganhas na rodada atual</param>
-        public void EncerrarRodada(int fichasGanhas)
+        public void EncerrarMao(int fichasGanhas)
         {
             if (fichasGanhas < 0)
                 throw new Exception(Ressource.JogadorMsgValorFichasGanhasInvalido);

@@ -113,9 +113,9 @@ namespace Poker.TexasHoldem.Test._Builder
                 var pontuacaoAtual = _pontuacoes?.Length > i ? _pontuacoes[i] : 0;
                 var fichas = _montantesDeFichas?.Length > i ? _montantesDeFichas[i] : Ressource.JogadorFichasInicial;
 
-                jogador.AlterarValorFichasApostadasNaRodada(apostaAtual);
                 jogador.TrocarStatus(statusAtual);
                 jogador.AtribuirFichas(fichas);
+                jogador.Apostar(apostaAtual);
 
                 if (_pontuacoes != null)
                     jogador.AtribuirPontuacao(pontuacaoAtual);
